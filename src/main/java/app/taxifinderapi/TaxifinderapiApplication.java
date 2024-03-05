@@ -1,0 +1,13 @@
+package app.taxifinderapi;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class TaxifinderapiApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(TaxifinderapiApplication.class, args);
+	}
+
+}
