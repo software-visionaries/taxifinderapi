@@ -1,2 +1,7 @@
-package app.taxifinderapi.repository;public class UserRepository {
+package app.taxifinderapi.repository;
+
+import app.taxifinderapi.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 }
