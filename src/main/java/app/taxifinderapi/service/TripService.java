@@ -1,6 +1,7 @@
 package app.taxifinderapi.service;
 
 import app.taxifinderapi.dto.TripDTO;
+import app.taxifinderapi.dto.TripResponseDto;
 import app.taxifinderapi.model.Trip;
 import app.taxifinderapi.model.User;
 import app.taxifinderapi.repository.TripRepository;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 
 @Service
@@ -53,4 +55,7 @@ public class TripService {
             return null;
         }
     }
+//    private List<Trip> responseTrip(List<TripResponseDto> tripResponseDtos, Long QuestionId) {
+//
+//    }
 }

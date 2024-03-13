@@ -1,10 +1,9 @@
 package app.taxifinderapi.repository;
 
-import app.taxifinderapi.model.Location;
+import app.taxifinderapi.model.Area;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LocationRepository extends JpaRepository<Location, Long> {
-
+public interface AreaRepository extends JpaRepository<Area, Long> {
 }
