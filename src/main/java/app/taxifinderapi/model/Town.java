@@ -11,4 +11,5 @@ public class Town {
     private String name;
     @OneToMany(mappedBy = "town")
     private List<Area> areas;
+
 }

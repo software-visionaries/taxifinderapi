@@ -15,4 +15,5 @@ public class Area {
     @ManyToOne()
     @JoinColumn(name = "town")
     private Town town;
+
 }

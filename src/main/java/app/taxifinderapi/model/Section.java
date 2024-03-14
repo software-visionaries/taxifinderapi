@@ -2,6 +2,8 @@ package app.taxifinderapi.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Section {
     @Id
@@ -11,4 +13,5 @@ public class Section {
     @ManyToOne()
     @JoinColumn(name = "area")
     private Area area;
+
 }

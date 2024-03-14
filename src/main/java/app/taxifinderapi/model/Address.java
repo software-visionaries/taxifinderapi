@@ -2,6 +2,8 @@ package app.taxifinderapi.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Address {
     @Id
@@ -10,13 +12,14 @@ public class Address {
     @ManyToOne()
     @JoinColumn(name = "user")
     private User user;
-    @OneToOne()
+    @ManyToOne
     @JoinColumn(name = "town")
     private Town town;
-    @OneToOne()
+    @ManyToOne
     @JoinColumn(name = "area")
     private Area area;
-    @OneToOne()
+    @ManyToOne
     @JoinColumn(name = "section")
     private Section section;
+
 }

@@ -2,8 +2,10 @@ package app.taxifinderapi.service;
 
 import app.taxifinderapi.dto.TripDTO;
 import app.taxifinderapi.dto.TripResponseDto;
+import app.taxifinderapi.model.Question;
 import app.taxifinderapi.model.Trip;
 import app.taxifinderapi.model.User;
+import app.taxifinderapi.repository.QuestionRepository;
 import app.taxifinderapi.repository.TripRepository;
 import app.taxifinderapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,6 +28,8 @@ public class TripService {
 
     @Autowired
     private TripRepository tripRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     public TripDTO addTrip(MultipartFile multipartFile, String note, String price, Long user_id) throws IOException {
 
@@ -55,7 +60,13 @@ public class TripService {
             return null;
         }
     }
-//    private List<Trip> responseTrip(List<TripResponseDto> tripResponseDtos, Long QuestionId) {
-//
-//    }
+    private List<TripResponseDto> responseTrip(String fromTown, String fromArea, String fromSection, String fromNumber,
+                                               String toTown, String toArea, String toSection, String toNumber) {
+        List<TripResponseDto> tripResponse = new ArrayList<>();
+
+
+
+        return  tripResponse;
+
+    }
 }
