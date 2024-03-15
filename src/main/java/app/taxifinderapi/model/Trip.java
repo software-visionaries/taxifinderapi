@@ -30,8 +30,8 @@ public class Trip {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "trip")
-    private Location location;
+    @OneToMany(mappedBy = "trip")
+    private List<Location> location;
 
     @OneToMany(mappedBy = "trip")
     private List<Comment> comments = new ArrayList<>();
@@ -106,11 +106,11 @@ public class Trip {
         this.down_vote = down_vote;
     }
 
-    public Location getLocation() {
+    public List<Location> getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(List<Location> location) {
         this.location = location;
     }
 

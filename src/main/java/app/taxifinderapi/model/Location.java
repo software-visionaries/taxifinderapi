@@ -1,9 +1,12 @@
 package app.taxifinderapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "location_id")
 public class Location {
 
     @Id
@@ -16,7 +19,7 @@ public class Location {
 
     private String longitude;
 
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "trip_id")
     private Trip trip;

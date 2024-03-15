@@ -11,21 +11,65 @@ public class TripResponseDto {
     private String toTownName;
     private String  toAreaName;
     private String toSectionName;
+    private String taxiRankLocation;
+    private String taxiRankLatitude;
+    private String taxiRankLongitude;
 
-    private List<String> taxiLocation;
-
-    public List<String> getTaxiLocation() {
-        return taxiLocation;
+    public String getTaxiRankLocation() {
+        return taxiRankLocation;
     }
 
-    public void setTaxiLocation(List<String> taxiLocation) {
-        this.taxiLocation = taxiLocation;
+    public void setTaxiRankLocation(String taxiRankLocation) {
+        this.taxiRankLocation = taxiRankLocation;
     }
+
+    public String getTaxiRankLatitude() {
+        return taxiRankLatitude;
+    }
+
+    public void setTaxiRankLatitude(String taxiRankLatitude) {
+        this.taxiRankLatitude = taxiRankLatitude;
+    }
+
+    public String getTaxiRankLongitude() {
+        return taxiRankLongitude;
+    }
+
+    public void setTaxiRankLongitude(String taxiRankLongitude) {
+        this.taxiRankLongitude = taxiRankLongitude;
+    }
+//    private Location taxiLocation;
+//    private List<Trip> trips;
+//
+//    public List<Trip> getTrips() {
+//        return trips;
+//    }
+//
+//    public void setTrips(List<Trip> trips) {
+//        this.trips = trips;
+//    }
+
+//    public Location getTaxiLocation() {
+//        return taxiLocation;
+//    }
+//
+//    public void setTaxiLocation(Location taxiLocation) {
+//        this.taxiLocation = taxiLocation;
+//    }
 
     private String FarePrice;
-    private String upVote;
-    private String downVote;
+    private Integer upVote;
+    private Integer downVote;
     private String attachment;
+    private Long tripId;
+
+    public Long getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(Long tripId) {
+        this.tripId = tripId;
+    }
 
     public String getToTownName() {
         return toTownName;
@@ -52,30 +96,27 @@ public class TripResponseDto {
     }
 
 
-
-
+    public void setFarePrice(String farePrice) {
+        FarePrice = farePrice;
+    }
 
     public String getFarePrice() {
         return FarePrice;
     }
 
-    public void setFarePrice(String farePrice) {
-        FarePrice = farePrice;
-    }
-
-    public String getUpVote() {
+    public Integer getUpVote() {
         return upVote;
     }
 
-    public void setUpVote(String upVote) {
+    public void setUpVote(Integer upVote) {
         this.upVote = upVote;
     }
 
-    public String getDownVote() {
+    public Integer getDownVote() {
         return downVote;
     }
 
-    public void setDownVote(String downVote) {
+    public void setDownVote(Integer downVote) {
         this.downVote = downVote;
     }
 

@@ -42,6 +42,8 @@ public class TripService {
     private ToQuestionRepository toQuestionRepository;
     @Autowired
     private FromQuestionRepository fromQuestionRepository;
+    @Autowired
+    private LocationRepository locationRepository;
 
 
     public TripDTO addTrip(MultipartFile multipartFile, String note, String price, Long user_id) throws IOException {
@@ -91,25 +93,30 @@ public class TripService {
         ToQuestion toQuestion = toQuestionRepository.findByAddress(toAddress);
         FromQuestion fromQuestion = fromQuestionRepository.findByAddress(fromAddress);
         Question question = findQuestion(fromQuestion,toQuestion);
-//        List<Trip> trips = findTrips(question);
+        List<Trip> trips = findTrips(question);
 
-        List<String> taxiLocation = new ArrayList<>();
-
-        TripResponseDto responseDto = new TripResponseDto();
-//        for(Trip trip : trips)
-//             System.out.println(trips);
-
-
+        for (Trip trip : trips) {
+            TripResponseDto responseDto = new TripResponseDto();
             responseDto.setFromAreaName(currentArea.getName());
-            responseDto.setFromTownName(currentArea.getName());
+            responseDto.setFromTownName(currentTown.getName());
             responseDto.setFromSectionName(currentSection.getName());
             responseDto.setToTownName(destinationTown.getName());
             responseDto.setToAreaName(destinationArea.getName());
             responseDto.setToSectionName(destinationSection.getName());
-//            responseDto.
+            responseDto.setFarePrice(trip.getPrice());
+            responseDto.setUpVote(trip.getUp_vote());
+            responseDto.setDownVote(trip.getDown_vote());
+            List<Location> taxiStand = trip.getLocation();
+            taxiStand.stream()
+                    .forEach(tempLocation -> {
+                        responseDto.setTaxiRankLatitude(tempLocation.getLatitude());
+                        responseDto.setTaxiRankLongitude(tempLocation.getLongitude());
+                        responseDto.setTaxiRankLocation(tempLocation.getName());
+                    });
+            responseDto.setAttachment(trip.getAttachment());
+            responseDto.setTripId(trip.getTrip_id());
             tripResponses.add(responseDto);
-
-
+        }
         return tripResponses;
     }
 
@@ -150,7 +157,4 @@ public class TripService {
                 .collect(Collectors.toList());
     }
 
-    public String tripFlag(boolean isNotEmpty) {
-        return "No responses found we added the query to our community for the future.";
-    }
 }
