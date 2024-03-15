@@ -26,10 +26,11 @@ public class TripController {
         return tripService.addTrip(multipartFile, note, price, user_id);
     }
 
-    @GetMapping("direction")
-    public List<TripResponseDto> getTaxiLocation(String fromTown, String fromArea, String fromSection, String fromNumber,
-                                                 String toTown, String toArea, String toSection, String toNumber) {
-        List<TripResponseDto> tripResponseDtos = new ArrayList<>();
+    @GetMapping("trip/direction")
+    public List<TripResponseDto> getTaxiLocation(@RequestParam(name = "fromTown") String fromTown,@RequestParam(name = "fromArea") String fromArea,
+                                                 @RequestParam(name = "fromSection") String fromSection, @RequestParam(name = "toTown") String toTown,
+                                                 @RequestParam(name = "toArea") String toArea,@RequestParam(name = "toSection") String toSection) {
+        List<TripResponseDto> tripResponseDtos = tripService.responseTrip(fromTown,fromArea,fromSection,toTown,toArea,toSection);
 
         return tripResponseDtos;
     }

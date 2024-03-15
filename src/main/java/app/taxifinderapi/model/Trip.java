@@ -1,12 +1,15 @@
 package app.taxifinderapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "trip_id")
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +26,26 @@ public class Trip {
 
     private Integer down_vote;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @JsonIgnore
     @OneToOne(mappedBy = "trip")
     private Location location;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "trip")
     private List<Comment> comments = new ArrayList<>();
+    @ManyToOne()
+    @JoinColumn(name = "question")
+    private Question question;
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
 
     public Trip() {
     }
