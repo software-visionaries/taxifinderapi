@@ -4,7 +4,6 @@ import app.taxifinderapi.dto.TripDTO;
 import app.taxifinderapi.dto.TripResponseDto;
 import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -17,11 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 @Service
 public class TripService {
@@ -30,37 +26,6 @@ public class TripService {
     @Autowired
     private TripRepository tripRepository;
 
-    public void saveImage(MultipartFile multipartFile, String path) throws IOException {
-        String uploadDirectory = System.getProperty("user.dir") + File.separator + path;
-        Path uploadPath = Paths.get(uploadDirectory);
-
-        if(!Files.exists(uploadPath)){
-            Files.createDirectories(uploadPath);
-        }
-
-        String fileExtension = getFileExtension(multipartFile);
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-
-        Path imagePath = uploadPath.resolve(fileName + fileExtension);
-        Files.write(imagePath, multipartFile.getBytes());
-    }
-
-    public String getFileExtension(MultipartFile multipartFile) {
-        String contentType = multipartFile.getContentType();
-        if(contentType == null){
-            return "";
-        }
-
-        String[] extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp"};
-
-        for(String extension: extensions) {
-            if(contentType.contains(extension.substring(1))){
-                return  extension;
-            }
-        }
-
-        return "";
-    }
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -76,9 +41,38 @@ public class TripService {
     private ToQuestionRepository toQuestionRepository;
     @Autowired
     private FromQuestionRepository fromQuestionRepository;
-    @Autowired
-    private LocationRepository locationRepository;
 
+    public void saveImage(MultipartFile multipartFile, String path) throws IOException {
+        String uploadDirectory = System.getProperty("user.dir") + File.separator + path;
+        Path uploadPath = Paths.get(uploadDirectory);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String fileExtension = getFileExtension(multipartFile);
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+
+        Path imagePath = uploadPath.resolve(fileName + fileExtension);
+        Files.write(imagePath, multipartFile.getBytes());
+    }
+
+    public String getFileExtension(MultipartFile multipartFile) {
+        String contentType = multipartFile.getContentType();
+        if (contentType == null) {
+            return "";
+        }
+
+        String[] extensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+
+        for (String extension : extensions) {
+            if (contentType.contains(extension.substring(1))) {
+                return extension;
+            }
+        }
+
+        return "";
+    }
 
     public TripDTO addTrip(MultipartFile multipartFile, String note, String price, Long user_id) throws IOException {
 
@@ -91,7 +85,7 @@ public class TripService {
 
         User user = userRepository.findById(user_id).orElse(null);
 
-        if(user != null){
+        if (user != null) {
             currTrip.setUser(user);
             Trip addedTrip = tripRepository.save(currTrip);
             TripDTO tripDTO = new TripDTO();
@@ -107,14 +101,9 @@ public class TripService {
             return null;
         }
     }
-    
-    private List<TripResponseDto> responseTrip(String fromTown, String fromArea, String fromSection, String fromNumber,
-                                               String toTown, String toArea, String toSection, String toNumber) {
-        List<TripResponseDto> tripResponse = new ArrayList<>();
-        return  tripResponse;
-    }
+
     public List<TripResponseDto> responseTrip(String fromTown, String fromArea, String fromSection,
-                                              String toTown, String toArea, String toSection) {
+            String toTown, String toArea, String toSection) {
 
         List<TripResponseDto> tripResponses = new ArrayList<>();
 
@@ -130,7 +119,7 @@ public class TripService {
         Address toAddress = findAddress(destinationTown, destinationArea, destinationSection);
         ToQuestion toQuestion = toQuestionRepository.findByAddress(toAddress);
         FromQuestion fromQuestion = fromQuestionRepository.findByAddress(fromAddress);
-        Question question = findQuestion(fromQuestion,toQuestion);
+        Question question = findQuestion(fromQuestion, toQuestion);
         List<Trip> trips = findTrips(question);
 
         for (Trip trip : trips) {
@@ -162,13 +151,12 @@ public class TripService {
         List<Address> addresses = addressRepository.findAll();
 
         Optional<Address> foundAddress = addresses.stream()
-                .filter(address ->
-                        address.getArea() != null &&
-                                address.getTown() != null &&
-                                address.getSection() != null &&
-                                address.getArea().equals(area) &&
-                                address.getTown().equals(town) &&
-                                address.getSection().equals(section))
+                .filter(address -> address.getArea() != null &&
+                        address.getTown() != null &&
+                        address.getSection() != null &&
+                        address.getArea().equals(area) &&
+                        address.getTown().equals(town) &&
+                        address.getSection().equals(section))
                 .findFirst();
 
         return foundAddress.orElse(null);
@@ -178,11 +166,10 @@ public class TripService {
         List<Question> questions = questionRepository.findAll();
 
         Optional<Question> foundQuestion = questions.stream()
-                .filter(question ->
-                        question.getToQuestion() != null &&
-                                question.getFromQuestion() != null &&
-                                question.getFromQuestion().equals(fromQuestion) &&
-                                question.getToQuestion().equals(toQuestion))
+                .filter(question -> question.getToQuestion() != null &&
+                        question.getFromQuestion() != null &&
+                        question.getFromQuestion().equals(fromQuestion) &&
+                        question.getToQuestion().equals(toQuestion))
                 .findFirst();
 
         return foundQuestion.orElse(null);
