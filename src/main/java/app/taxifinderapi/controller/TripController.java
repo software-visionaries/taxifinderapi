@@ -2,8 +2,6 @@ package app.taxifinderapi.controller;
 
 import app.taxifinderapi.dto.TripDTO;
 import app.taxifinderapi.dto.TripResponseDto;
-import app.taxifinderapi.model.Trip;
-import app.taxifinderapi.service.FileSystemStorageService;
 import app.taxifinderapi.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +16,6 @@ public class TripController {
 
     @Autowired
     private TripService tripService;
-
-    @Autowired
-    private FileSystemStorageService fileSystemStorageService;
 
     @PostMapping("/add/trip/{user_id}")
     public TripDTO addTrip(@PathVariable Long user_id,

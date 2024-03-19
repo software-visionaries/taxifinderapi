@@ -1,13 +1,9 @@
 package app.taxifinderapi.model;
 
-import app.taxifinderapi.dto.TripResponseDto;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-
-import java.util.List;
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -16,21 +12,31 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne()
     @JsonIgnore
     @JoinColumn(name = "user")
     private User user;
+
     @ManyToOne
     @JoinColumn(name = "town")
     private Town town;
+
     @ManyToOne
     @JoinColumn(name = "area")
     private Area area;
+    
     @ManyToOne
     @JoinColumn(name = "section")
     private Section section;
 
     public Address() {
+    }
+
+    public Address(Town town, Area area, Section section) {
+        this.town = town;
+        this.area = area;
+        this.section = section;
     }
 
     public Long getId() {

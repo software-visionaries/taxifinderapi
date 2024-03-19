@@ -1,7 +1,6 @@
 package app.taxifinderapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -11,11 +10,16 @@ public class ToQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @OneToOne()
     @JoinColumn(name = "address")
     private Address address;
 
     public ToQuestion() {
+    }
+
+    public ToQuestion(Address address) {
+        this.address = address;
     }
 
     public Long getId() {

@@ -18,7 +18,8 @@ public class Section {
     @JoinColumn(name = "area")
     private Area area;
 
-    public Section() {
+    public Section(String name) {
+        this.name = name;
     }
 
     public Long getId() {
