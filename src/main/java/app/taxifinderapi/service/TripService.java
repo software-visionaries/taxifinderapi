@@ -7,6 +7,7 @@ import app.taxifinderapi.repository.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,9 +27,40 @@ import java.util.stream.Collectors;
 public class TripService {
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private TripRepository tripRepository;
+
+    public void saveImage(MultipartFile multipartFile, String path) throws IOException {
+        String uploadDirectory = System.getProperty("user.dir") + File.separator + path;
+        Path uploadPath = Paths.get(uploadDirectory);
+
+        if(!Files.exists(uploadPath)){
+            Files.createDirectories(uploadPath);
+        }
+
+        String fileExtension = getFileExtension(multipartFile);
+        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+
+        Path imagePath = uploadPath.resolve(fileName + fileExtension);
+        Files.write(imagePath, multipartFile.getBytes());
+    }
+
+    public String getFileExtension(MultipartFile multipartFile) {
+        String contentType = multipartFile.getContentType();
+        if(contentType == null){
+            return "";
+        }
+
+        String[] extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp"};
+
+        for(String extension: extensions) {
+            if(contentType.contains(extension.substring(1))){
+                return  extension;
+            }
+        }
+
+        return "";
+    }
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -48,10 +82,8 @@ public class TripService {
 
     public TripDTO addTrip(MultipartFile multipartFile, String note, String price, Long user_id) throws IOException {
 
-        String uploadDirectory = System.getProperty("user.dir") + File.separator + "src/main/resources/static/images/signs/";
-        Path imagePath = Paths.get(uploadDirectory, multipartFile.getOriginalFilename());
-        Files.write(imagePath, multipartFile.getBytes());
-
+        String path = "src/main/resources/static/images/signs";
+        saveImage(multipartFile, path);
         Trip currTrip = new Trip();
         currTrip.setAttachment(multipartFile.getOriginalFilename());
         currTrip.setNote(note);
@@ -74,6 +106,12 @@ public class TripService {
         } else {
             return null;
         }
+    }
+    
+    private List<TripResponseDto> responseTrip(String fromTown, String fromArea, String fromSection, String fromNumber,
+                                               String toTown, String toArea, String toSection, String toNumber) {
+        List<TripResponseDto> tripResponse = new ArrayList<>();
+        return  tripResponse;
     }
     public List<TripResponseDto> responseTrip(String fromTown, String fromArea, String fromSection,
                                               String toTown, String toArea, String toSection) {
