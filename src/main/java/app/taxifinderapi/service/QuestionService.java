@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import app.payload.request.QuestionRequest;
+import app.taxifinderapi.dto.QuestionDTO;
 import app.taxifinderapi.model.Address;
 import app.taxifinderapi.model.Area;
 import app.taxifinderapi.model.FromQuestion;
@@ -50,6 +51,18 @@ public class QuestionService {
 
     @Autowired
     SectionRepository sectionRepository;
+
+    public QuestionDTO getQuestion(Long question_id){
+        Question question = questionRepository.findById(question_id).orElse(null);
+        QuestionDTO questionDTO = new QuestionDTO(question.getQuestionId(), 
+        question.getFromQuestion().getAddress().getTown().getName(), 
+        question.getFromQuestion().getAddress().getArea().getName(), 
+        question.getFromQuestion().getAddress().getSection().getName(), 
+        question.getToQuestion().getAddress().getTown().getName(), 
+        question.getToQuestion().getAddress().getArea().getName(), 
+        question.getToQuestion().getAddress().getSection().getName());
+        return questionDTO;
+    }
 
     @Transactional
     public ResponseEntity<String> postQuestion(Long user_id, QuestionRequest question) {

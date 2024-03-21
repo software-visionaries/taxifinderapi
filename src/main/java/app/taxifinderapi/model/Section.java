@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Section {
@@ -17,6 +15,9 @@ public class Section {
     @ManyToOne()
     @JoinColumn(name = "area")
     private Area area;
+
+    public Section() {
+    }
 
     public Section(String name) {
         this.name = name;

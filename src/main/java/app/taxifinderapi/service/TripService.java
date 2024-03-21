@@ -4,7 +4,10 @@ import app.taxifinderapi.dto.TripDTO;
 import app.taxifinderapi.dto.TripResponseDto;
 import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 public class TripService {
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private TripRepository tripRepository;
 
@@ -31,16 +35,24 @@ public class TripService {
 
     @Autowired
     private AreaRepository areaRepository;
+
     @Autowired
     private TownRepository townRepository;
+
     @Autowired
     private SectionRepository sectionRepository;
+
     @Autowired
     private AddressRepository addressRepository;
+
     @Autowired
     private ToQuestionRepository toQuestionRepository;
+
     @Autowired
     private FromQuestionRepository fromQuestionRepository;
+
+    @Autowired
+    LocationRepository locationRepository;
 
     public void saveImage(MultipartFile multipartFile, String path) throws IOException {
         String uploadDirectory = System.getProperty("user.dir") + File.separator + path;
@@ -74,19 +86,37 @@ public class TripService {
         return "";
     }
 
-    public TripDTO addTrip(MultipartFile multipartFile, String note, String price, Long user_id) throws IOException {
-
-        String path = "src/main/resources/static/images/signs";
+    public ResponseEntity<String> addImage(MultipartFile multipartFile, String path, Long trip_id) throws IOException {
         saveImage(multipartFile, path);
+        Trip trip = tripRepository.findById(trip_id).orElse(null);
+        trip.setAttachment(multipartFile.getOriginalFilename());
+        return ResponseEntity.ok().body("Image was successfully saved");
+    }
+
+    @Transactional
+    public TripDTO addTrip(
+            String note,
+            String price,
+            String name,
+            String latitude,
+            String longitude,
+            Long user_id,
+            Long question_id) throws IOException {
+
         Trip currTrip = new Trip();
-        currTrip.setAttachment(multipartFile.getOriginalFilename());
         currTrip.setNote(note);
         currTrip.setPrice(price);
 
-        User user = userRepository.findById(user_id).orElse(null);
+        Location location = new Location(name, latitude, longitude);
+        location.setTrip(currTrip);
+        locationRepository.save(location);
 
-        if (user != null) {
+        User user = userRepository.findById(user_id).orElse(null);
+        Question question = questionRepository.findById(question_id).orElse(null);
+
+        if (user != null && question != null) {
             currTrip.setUser(user);
+            currTrip.setQuestion(question);
             Trip addedTrip = tripRepository.save(currTrip);
             TripDTO tripDTO = new TripDTO();
             tripDTO.setTripId(addedTrip.getTrip_id());
@@ -96,7 +126,6 @@ public class TripService {
             tripDTO.setUpVote(addedTrip.getUp_vote());
             tripDTO.setDownVote(addedTrip.getDown_vote());
             return tripDTO;
-
         } else {
             return null;
         }
