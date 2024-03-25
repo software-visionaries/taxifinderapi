@@ -10,11 +10,16 @@ public class FromQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @OneToOne()
     @JoinColumn(name = "address")
     private Address address;
 
     public FromQuestion() {
+    }
+
+    public FromQuestion(Address address) {
+        this.address = address;
     }
 
     public Long getId() {

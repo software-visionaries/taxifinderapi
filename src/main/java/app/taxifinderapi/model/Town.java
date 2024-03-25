@@ -11,11 +11,17 @@ public class Town {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     @OneToMany(mappedBy = "town")
     private List<Area> areas;
 
     public Town() {
+    }
+
+    public Town(String name) {
+        this.name = name;
     }
 
     public Long getId() {

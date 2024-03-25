@@ -12,19 +12,28 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long questionId;
+
     @OneToOne
     @JoinColumn(name = "fromQuestion")
     private FromQuestion fromQuestion;
+    
     @OneToOne
     @JoinColumn(name = "toQuestion")
     private ToQuestion toQuestion;
+
     @OneToMany(mappedBy = "question")
     private List<Trip> trips;
+    
     @ManyToOne()
     @JoinColumn(name = "user")
     private User user;
 
     public Question() {
+    }
+
+    public Question(FromQuestion fromQuestion, ToQuestion toQuestion) {
+        this.fromQuestion = fromQuestion;
+        this.toQuestion = toQuestion;
     }
 
     public List<Trip> getTrips() {
