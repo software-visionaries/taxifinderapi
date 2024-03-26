@@ -3,8 +3,6 @@ package app.taxifinderapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import app.payload.request.QuestionRequest;
 import app.taxifinderapi.dto.QuestionDTO;
 import app.taxifinderapi.model.Address;

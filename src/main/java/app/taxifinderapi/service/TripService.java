@@ -62,10 +62,10 @@ public class TripService {
             Files.createDirectories(uploadPath);
         }
 
-        String fileExtension = getFileExtension(multipartFile);
+        // String fileExtension = getFileExtension(multipartFile);
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 
-        Path imagePath = uploadPath.resolve(fileName + fileExtension);
+        Path imagePath = uploadPath.resolve(fileName);
         Files.write(imagePath, multipartFile.getBytes());
     }
 
@@ -89,7 +89,10 @@ public class TripService {
     public ResponseEntity<String> addImage(MultipartFile multipartFile, String path, Long trip_id) throws IOException {
         saveImage(multipartFile, path);
         Trip trip = tripRepository.findById(trip_id).orElse(null);
+        System.out.println(multipartFile.getOriginalFilename());
+        System.out.println(trip.getPrice());
         trip.setAttachment(multipartFile.getOriginalFilename());
+        tripRepository.save(trip);
         return ResponseEntity.ok().body("Image was successfully saved");
     }
 
