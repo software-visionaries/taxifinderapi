@@ -54,6 +54,10 @@ public class TripService {
     @Autowired
     LocationRepository locationRepository;
 
+
+
+
+
     public void saveImage(MultipartFile multipartFile, String path) throws IOException {
         String uploadDirectory = System.getProperty("user.dir") + File.separator + path;
         Path uploadPath = Paths.get(uploadDirectory);
@@ -210,5 +214,6 @@ public class TripService {
                 .filter(trip -> trip.getQuestion() != null && trip.getQuestion().equals(question))
                 .collect(Collectors.toList());
     }
+
 
 }

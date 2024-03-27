@@ -2,6 +2,7 @@ package app.taxifinderapi.dto;
 
 import app.taxifinderapi.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TripResponseDto {
@@ -152,5 +153,6 @@ public class TripResponseDto {
     public void setFromSectionName(String fromSectionName) {
         this.fromSectionName = fromSectionName;
     }
+
 
 }

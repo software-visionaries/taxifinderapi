@@ -17,6 +17,8 @@ public class TripController {
 
     @Autowired
     private TripService tripService;
+
+
     
 
     @PostMapping("/add/trip/{user_id}/{question_id}")
