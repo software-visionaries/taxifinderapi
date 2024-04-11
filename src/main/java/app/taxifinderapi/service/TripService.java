@@ -7,17 +7,13 @@ import app.taxifinderapi.exceptions.TripException;
 import app.taxifinderapi.exceptions.UserException;
 import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
-<<<<<<< HEAD
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-=======
 import jakarta.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
->>>>>>> f39160db4421398f55fb1c57d99a3eef29dbb170
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,15 +58,10 @@ public class TripService {
     @Autowired
     LocationRepository locationRepository;
 
-<<<<<<< HEAD
-    @Autowired
-    private LocationService locationService;
 
-=======
     public void saveImage(MultipartFile multipartFile, String path) throws IOException {
         String uploadDirectory = System.getProperty("user.dir") + File.separator + path;
         Path uploadPath = Paths.get(uploadDirectory);
->>>>>>> f39160db4421398f55fb1c57d99a3eef29dbb170
 
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
