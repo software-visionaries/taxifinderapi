@@ -1,6 +1,5 @@
 package app.taxifinderapi.dto;
 
-import java.util.List;
 
 public class TripDTO {
     private Long tripId;
@@ -65,9 +64,5 @@ public class TripDTO {
 
     public Long getLocation() {
         return location;
-    }
-
-    public void setLocation(Long locationIds) {
-        this.location = location;
     }
 }

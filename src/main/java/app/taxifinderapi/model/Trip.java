@@ -35,6 +35,7 @@ public class Trip {
 
     @OneToMany(mappedBy = "trip")
     private List<Comment> comments = new ArrayList<>();
+    
     @ManyToOne()
     @JoinColumn(name = "question")
     private Question question;

@@ -23,6 +23,10 @@ public class Area {
     public Area() {
     }
 
+    public Area(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
