@@ -1,6 +1,6 @@
 package app.taxifinderapi.repository;
 
-import app.taxifinderapi.model.Question;
+import app.taxifinderapi.model.Rating;
 import app.taxifinderapi.model.Trip;
 import app.taxifinderapi.model.User;
 import org.springframework.data.domain.Page;
@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-@Repository
-public interface TripRepository extends JpaRepository<Trip, Long> {
-    List<Trip> findByQuestion(Question question);
-    List<Trip> findByUser(User user);
+import java.util.Optional;
 
-//    public Page<Trip> adminTrips (Pageable pageable);
+@Repository
+public interface RatingRepository extends JpaRepository<Rating,Long> {
+    Optional<Rating> findByUserAndTrip(Trip trip, User user);
+    List<Rating> findAllByTrip(Trip trip);
+    Rating findByUser( User user);
+//    Page<Rating> findAllTrip(Pageable pageable);
 }

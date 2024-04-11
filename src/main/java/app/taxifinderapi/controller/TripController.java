@@ -1,5 +1,6 @@
 package app.taxifinderapi.controller;
 
+import app.taxifinderapi.dto.TripCoordinate;
 import app.taxifinderapi.dto.TripDTO;
 import app.taxifinderapi.dto.TripResponseDto;
 import app.taxifinderapi.model.Trip;
@@ -33,5 +34,9 @@ public class TripController {
         List<TripResponseDto> tripResponseDtos = tripService.responseTrip(fromTown,fromArea,fromSection,toTown,toArea,toSection);
 
         return tripResponseDtos;
+    }
+    @GetMapping("trip/{tripId}")
+    public TripCoordinate singleCoordinates(@PathVariable Long tripId) {
+      return tripService.tripLocation(tripId);
     }
 }

@@ -1,11 +1,16 @@
 package app.taxifinderapi.service;
 
+import app.taxifinderapi.dto.TripCoordinate;
 import app.taxifinderapi.dto.TripDTO;
 import app.taxifinderapi.dto.TripResponseDto;
+import app.taxifinderapi.exceptions.TripException;
+import app.taxifinderapi.exceptions.UserException;
 import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,9 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -44,6 +47,9 @@ public class TripService {
     private FromQuestionRepository fromQuestionRepository;
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private LocationService locationService;
 
 
     public TripDTO addTrip(MultipartFile multipartFile, String note, String price, Long user_id) throws IOException {
@@ -75,10 +81,9 @@ public class TripService {
             return null;
         }
     }
+
     public List<TripResponseDto> responseTrip(String fromTown, String fromArea, String fromSection,
                                               String toTown, String toArea, String toSection) {
-
-        List<TripResponseDto> tripResponses = new ArrayList<>();
 
         Town currentTown = townRepository.findByName(fromTown);
         Area currentArea = areaRepository.findByName(fromArea);
@@ -92,10 +97,10 @@ public class TripService {
         Address toAddress = findAddress(destinationTown, destinationArea, destinationSection);
         ToQuestion toQuestion = toQuestionRepository.findByAddress(toAddress);
         FromQuestion fromQuestion = fromQuestionRepository.findByAddress(fromAddress);
-        Question question = findQuestion(fromQuestion,toQuestion);
+        Question question = findQuestion(fromQuestion, toQuestion);
         List<Trip> trips = findTrips(question);
 
-        for (Trip trip : trips) {
+        return trips.stream().map(trip -> {
             TripResponseDto responseDto = new TripResponseDto();
             responseDto.setFromAreaName(currentArea.getName());
             responseDto.setFromTownName(currentTown.getName());
@@ -107,17 +112,25 @@ public class TripService {
             responseDto.setUpVote(trip.getUp_vote());
             responseDto.setDownVote(trip.getDown_vote());
             List<Location> taxiStand = trip.getLocation();
-            taxiStand.stream()
-                    .forEach(tempLocation -> {
-                        responseDto.setTaxiRankLatitude(tempLocation.getLatitude());
-                        responseDto.setTaxiRankLongitude(tempLocation.getLongitude());
-                        responseDto.setTaxiRankLocation(tempLocation.getName());
-                    });
+            taxiStand.forEach(tempLocation -> {
+                responseDto.setTaxiRankLatitude(tempLocation.getLatitude());
+                responseDto.setTaxiRankLongitude(tempLocation.getLongitude());
+                responseDto.setTaxiRankLocation(tempLocation.getName());
+                responseDto.setLocationId(tempLocation.getLocation_id());
+            });
             responseDto.setAttachment(trip.getAttachment());
             responseDto.setTripId(trip.getTrip_id());
-            tripResponses.add(responseDto);
-        }
-        return tripResponses;
+            return responseDto;
+        }).collect(Collectors.toList());
+    }
+
+
+    public TripCoordinate tripLocation(Long tripId) {
+        Location location= locationRepository.findById(tripId).get();
+        TripCoordinate tripCoordinate = new TripCoordinate();
+        tripCoordinate.setLat(location.getLatitude());
+        tripCoordinate.setLng(location.getLongitude());
+        return tripCoordinate;
     }
 
     public Address findAddress(Town town, Area area, Section section) {
@@ -156,5 +169,68 @@ public class TripService {
                 .filter(trip -> trip.getQuestion() != null && trip.getQuestion().equals(question))
                 .collect(Collectors.toList());
     }
+
+    public List<Trip> userTrip(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            throw new UserException("User doesn't exists");
+        });
+        List<Trip> trips = tripRepository.findByUser(user);
+        return trips;
+    }
+
+    public Trip updateUserTrip(Trip tripRequest, Long tripId, Long userId) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new TripException("Trip not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not found"));
+
+        if (!trip.getUser().getUser_id().equals(userId)) {
+            throw new IllegalArgumentException("User is not authorized to update this trip");
+        }
+
+        Trip updatedTrip = new Trip();
+        if (tripRequest.getAttachment() != null && !tripRequest.getAttachment().equals(trip.getAttachment())) {
+            updatedTrip.setAttachment(tripRequest.getAttachment());
+        }
+        if (tripRequest.getPrice() != null && !tripRequest.getPrice().equals(trip.getPrice())) {
+            updatedTrip.setPrice(tripRequest.getPrice());
+        }
+
+        List<Location> locations = trip.getLocation();
+
+        List<Location> userLocations = locations.stream()
+                .filter(loc -> loc.getTrip().getUser().equals(user))
+                .collect(Collectors.toList());
+
+        if (userLocations.size() == 1) {
+            Location location = userLocations.get(0);
+            if (tripRequest.getLocation() != null && !tripRequest.getLocation().equals(location)) {
+                location = tripRequest.getLocation().get(0);
+            }
+            updatedTrip.setLocation(List.of(location));
+        } else if (userLocations.size() > 1) {
+
+            throw new IllegalStateException("Multiple locations found for the user. User needs to select one to update.");
+        } else {
+            throw new IllegalStateException("No location found for the user.");
+        }
+
+        return tripRepository.save(updatedTrip);
+    }
+
+
+//    public Page<Trip> adminTrips (Optional<Integer> pageNo,Optional<Integer> pageSize) {
+//        Pageable pageable = PageRequest.of(pageNo.get(),pageSize.get());
+//        int evalPageSize = pageSize.orElse(8);
+////        int evalPage = pageNo.filter(p -> p >= 1).map(p -> p - 1)
+//        return tripRepository.adminTrips(pageable);
+//
+//    }
+
+
+
+
+
 
 }

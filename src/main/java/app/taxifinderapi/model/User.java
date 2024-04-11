@@ -17,11 +17,57 @@ public class User {
     private String email;
 
     private String password;
-    @OneToMany(mappedBy = "user")
-    private List<Address> addresses;
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 
     @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+    @OneToMany(mappedBy = "user")
     private List<Question> questions;
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
+    @OneToMany(mappedBy = "user")
+    private List<ReplyComment> replyComments;
+    @OneToOne(mappedBy = "user")
+    private Rating rating;
+
+    public List<ReplyComment> getReplyComments() {
+        return replyComments;
+    }
+
+    public void setReplyComments(List<ReplyComment> replyComments) {
+        this.replyComments = replyComments;
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
+    }
+
+    public List<ReplyComment> getReplayComments() {
+        return replyComments;
+    }
+
+    public void setReplayComments(List<ReplyComment> replyComments) {
+        this.replyComments = replyComments;
+    }
 
     public List<Address> getAddresses() {
         return addresses;

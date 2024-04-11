@@ -38,6 +38,16 @@ public class Trip {
     @ManyToOne()
     @JoinColumn(name = "question")
     private Question question;
+    @OneToMany(mappedBy = "trip")
+    private List<Rating> ratings;
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
 
     public Question getQuestion() {
         return question;
