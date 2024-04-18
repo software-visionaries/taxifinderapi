@@ -7,10 +7,6 @@ import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -57,8 +53,10 @@ public class TripService {
     @Autowired
     LocationRepository locationRepository;
 
+
     @Autowired
     QuestionService questionService;
+
 
 
     public void saveImage(MultipartFile multipartFile, String path) throws IOException {
