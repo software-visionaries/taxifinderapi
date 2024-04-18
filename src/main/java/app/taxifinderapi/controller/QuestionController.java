@@ -39,7 +39,7 @@ public class QuestionController {
                                                   @PathVariable Long fromSection,@PathVariable Long toSection,@RequestBody TownAreaSectionDto townAreaSectionDto) {
         return questionService.updateQuestionAdmin(fromTownId,toTownId,fromArea,toArea,fromSection,toSection,townAreaSectionDto);
     }
-    @DeleteMapping("/admin/questions/delete/{fromTownId}/{toTownId }/{fromAreaId}/{toAreaId}/{fromSectionId}/{toSectionId}")
+    @DeleteMapping("/admin/questions/delete/{fromTownId}/{toTownId}/{fromAreaId}/{toAreaId}/{fromSectionId}/{toSectionId}")
     public void deleteTownAreaSection (Long fromTownId, Long toTownId, Long fromAreaId, Long toAreaId,
                                        Long fromSectionId, Long toSectionId) {
         questionService.deleteTownAreaSection(fromTownId,toTownId,fromAreaId,toAreaId,fromSectionId,toSectionId);

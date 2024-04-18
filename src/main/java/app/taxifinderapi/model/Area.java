@@ -1,7 +1,6 @@
 package app.taxifinderapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -13,9 +12,12 @@ public class Area {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     @OneToMany(mappedBy = "area")
     private List<Section> sections;
+    
     @ManyToOne()
     @JoinColumn(name = "town")
     private Town town;

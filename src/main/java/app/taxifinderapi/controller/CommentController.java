@@ -1,17 +1,11 @@
 package app.taxifinderapi.controller;
 
 import app.taxifinderapi.dto.CommentAndReplyCommentDto;
-import app.taxifinderapi.exceptions.CommentException;
-import app.taxifinderapi.model.Comment;
-import app.taxifinderapi.model.ReplyComment;
-import app.taxifinderapi.repository.CommentRepository;
-import app.taxifinderapi.repository.ReplyCommentRepository;
 import app.taxifinderapi.service.CommentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 //@RequestMapping("comments/api/v1.0.0.1")
