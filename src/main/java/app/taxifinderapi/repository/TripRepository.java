@@ -14,5 +14,6 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     List<Trip> findByQuestion(Question question);
     List<Trip> findByUser(User user);
 
-//    public Page<Trip> adminTrips (Pageable pageable);
+
+//    public Page<Trip> findAll (Pageable pageable);
 }

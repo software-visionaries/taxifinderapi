@@ -69,4 +69,8 @@ public class LocationService {
       }
       return locationTemp;
     }
+
+    public List<Location> locations () {
+        return  locationRepository.findAll();
+    }
 }

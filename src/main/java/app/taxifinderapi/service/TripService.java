@@ -1,23 +1,18 @@
 package app.taxifinderapi.service;
 
-import app.taxifinderapi.dto.TripCoordinate;
-import app.taxifinderapi.dto.TripDTO;
-import app.taxifinderapi.dto.TripResponseDto;
+import app.taxifinderapi.dto.*;
 import app.taxifinderapi.exceptions.TripException;
 import app.taxifinderapi.exceptions.UserException;
 import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
-<<<<<<< HEAD
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-=======
-import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
->>>>>>> f39160db4421398f55fb1c57d99a3eef29dbb170
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,15 +57,14 @@ public class TripService {
     @Autowired
     LocationRepository locationRepository;
 
-<<<<<<< HEAD
     @Autowired
-    private LocationService locationService;
+    QuestionService questionService;
 
-=======
+
     public void saveImage(MultipartFile multipartFile, String path) throws IOException {
         String uploadDirectory = System.getProperty("user.dir") + File.separator + path;
         Path uploadPath = Paths.get(uploadDirectory);
->>>>>>> f39160db4421398f55fb1c57d99a3eef29dbb170
+
 
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
@@ -151,12 +145,12 @@ public class TripService {
     public List<TripResponseDto> responseTrip(String fromTown, String fromArea, String fromSection,
             String toTown, String toArea, String toSection) {
 
-        Town currentTown = townRepository.findByName(fromTown);
-        Area currentArea = areaRepository.findByName(fromArea);
+        Town currentTown = townRepository.findByName(questionService.word(fromTown));
+        Area currentArea = areaRepository.findByName(questionService.word(fromArea));
         Section currentSection = sectionRepository.findByName(fromSection);
 
-        Town destinationTown = townRepository.findByName(toTown);
-        Area destinationArea = areaRepository.findByName(toArea);
+        Town destinationTown = townRepository.findByName(questionService.word(toTown));
+        Area destinationArea = areaRepository.findByName(questionService.word(toArea));
         Section destinationSection = sectionRepository.findByName(toSection);
 
         Address fromAddress = findAddress(currentTown, currentArea, currentSection);
@@ -283,18 +277,148 @@ public class TripService {
         return tripRepository.save(updatedTrip);
     }
 
+    public List<AdminTripDto> adminTripDtoList() {
+        List<Trip> trips = tripRepository.findAll();
+        Map<Long, Question> questionMap = new HashMap<>();
+        Map<Long, FromQuestion> fromQuestionMap = new HashMap<>();
+        Map<Long, ToQuestion> toQuestionMap = new HashMap<>();
+        Map<Long, Address> addressMap = new HashMap<>();
+        Map<Long, Town> townMap = new HashMap<>();
+        Map<Long, Area> areaMap = new HashMap<>();
+        Map<Long, Section> sectionMap = new HashMap<>();
+        Map<Long,Location> locationMap = new HashMap<>();
 
-//    public Page<Trip> adminTrips (Optional<Integer> pageNo,Optional<Integer> pageSize) {
-//        Pageable pageable = PageRequest.of(pageNo.get(),pageSize.get());
-//        int evalPageSize = pageSize.orElse(8);
-////        int evalPage = pageNo.filter(p -> p >= 1).map(p -> p - 1)
-//        return tripRepository.adminTrips(pageable);
+
+        questionRepository.findAll().forEach(question -> questionMap.put(question.getQuestionId(), question));
+        fromQuestionRepository.findAll().forEach(fromQuestion -> fromQuestionMap.put(fromQuestion.getId(), fromQuestion));
+        toQuestionRepository.findAll().forEach(toQuestion -> toQuestionMap.put(toQuestion.getId(), toQuestion));
+        addressRepository.findAll().forEach(address -> addressMap.put(address.getId(), address));
+        townRepository.findAll().forEach(town -> townMap.put(town.getId(), town));
+        areaRepository.findAll().forEach(area -> areaMap.put(area.getId(), area));
+        sectionRepository.findAll().forEach(section -> sectionMap.put(section.getId(), section));
+        locationRepository.findAll().forEach(location -> locationMap.put(location.getLocation_id(),location));
+
+        List<AdminTripDto> adminTripDtos = new ArrayList<>();
+
+        for (Trip trip : trips) {
+            AdminTripDto tripDto = new AdminTripDto();
+            Question question = null;
+            if (trip.getQuestion() != null) {
+                question = questionMap.get(trip.getQuestion().getQuestionId());
+
+            }
+            if (question != null) {
+                FromQuestion fromQuestion = fromQuestionMap.get(question.getFromQuestion().getId());
+                ToQuestion toQuestion = toQuestionMap.get(question.getToQuestion().getId());
+                Address addressTo = addressMap.get(toQuestion.getAddress().getId());
+                Address addressFrom = addressMap.get(fromQuestion.getAddress().getId());
+                Town townTo = townMap.get(addressTo.getTown().getId());
+                Town townFrom = townMap.get(addressFrom.getTown().getId());
+
+
+
+                Area areaTo = null;
+                Area areaFrom = null;
+                Section sectionTo = null;
+                Section sectionFrom = null;
+                Location taxilocation = null;
+
+                for (Area area : townTo.getAreas()) {
+                    if (areaMap.containsKey(area.getId())) {
+                        areaTo = areaMap.get(area.getId());
+                        break;
+                    }
+                }
+                for (Area area : townFrom.getAreas()) {
+                    if (areaMap.containsKey(area.getId())) {
+                        areaFrom = areaMap.get(area.getId());
+                        break;
+                    }
+                }
+
+
+                if (areaTo != null && areaFrom != null) {
+                    for (Section section : areaTo.getSections()) {
+                        if (sectionMap.containsKey(section.getId())) {
+                            sectionTo = sectionMap.get(section.getId());
+                            break;
+                        }
+                    }
+                    for (Section section : areaFrom.getSections()) {
+                        if (sectionMap.containsKey(section.getId())) {
+                            sectionFrom = sectionMap.get(section.getId());
+                            break;
+                        }
+                    }
+                }
+
+                if(trip != null) {
+                    for (Location location : trip.getLocation()) {
+                        if(locationMap.containsKey(location.getLocation_id())) {
+                            taxilocation = locationMap.get(location.getLocation_id());
+                        }
+                    }
+                }
+                tripDto.setFromQuestion(townFrom.getName() + ", " + areaFrom.getName() + ", " + sectionFrom.getName());
+                tripDto.setToQuestion(townTo.getName() + ", " + areaTo.getName() + ", " + sectionTo.getName());
+                tripDto.setTaxiPrice(trip.getPrice());
+                tripDto.setTripId(trip.getTrip_id());
+                if (taxilocation != null) {
+                    tripDto.setTaxiLocation(taxilocation.getName());
+                    tripDto.setLocationId(taxilocation.getLocation_id());
+                } else {
+                    tripDto.setTaxiLocation("Unknown Location");
 //
-//    }
+                }
+
+                adminTripDtos.add(tripDto);
+            }
+        }
+
+        return adminTripDtos;
+        }
+
+        public TripLocationDto updateTripAdmin(Long tripId, Long locationId,TripLocationDto tripLocation) {
+            Location location = locationRepository.findById(locationId).get();
+            Trip trip = tripRepository.findById(tripId).get();
+
+            Location locationTemp = new Location();
+            Trip tripTemp = new Trip();
+            TripLocationDto tripLocationDto = new TripLocationDto();
+
+            if(location.getName() != null && !(location.getName()
+                    .equals(tripLocation.getLocation().getName()))) {
+                locationTemp.setName(tripLocation.getLocation().getName());
+            }
+            if(location.getLatitude() != null && !(location.getLatitude()
+                    .equals(tripLocationDto.getLocation().getLatitude()))) {
+                locationTemp.setLatitude(tripLocationDto.getLocation().getLatitude());
+            }
+            if(location.getLongitude() != null && !(location.getLongitude()
+                    .equals(tripLocationDto.getLocation().getLongitude()))) {
+                locationTemp.setLongitude(tripLocationDto.getLocation().getLongitude());
+            }
+            if(trip.getAttachment() != null && !(trip.getAttachment()
+                    .equals(tripLocationDto.getTrip().getAttachment()))) {
+                tripTemp.setAttachment(tripLocationDto.getTrip().getAttachment());
+            }
+            if(trip.getPrice() != null && !(trip.getPrice()
+                    .equals(tripLocationDto.getTrip().getPrice()))) {
+                tripTemp.setPrice(tripLocationDto.getTrip().getPrice());
+            }
+            if(trip.getNote() != null && !(trip.getNote().equals(tripLocationDto.getTrip().getNote()))) {
+                tripTemp.setPrice(tripLocationDto.getTrip().getPrice());
+            }
+
+            tripLocationDto.setLocation(locationTemp);
+            tripLocationDto.setTrip(tripTemp);
+            return tripLocationDto;
+        }
+
+        public void deleteTripLocation(Long tripId, Long locationId) {
+            locationRepository.deleteById(locationId);
+            tripRepository.deleteById(tripId );
+        }
 
 
-
-
-
-
-}
+    }
