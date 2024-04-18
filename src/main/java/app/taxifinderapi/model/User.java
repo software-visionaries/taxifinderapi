@@ -16,12 +16,18 @@ public class User {
 
     private String email;
 
+    private String roles;
+
     private String password;
+
     @OneToMany(mappedBy = "user")
     private List<Address> addresses;
 
     @OneToMany(mappedBy = "user")
     private List<Question> questions;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<RefreshToken> refreshTokens;
 
     public List<Address> getAddresses() {
         return addresses;
@@ -38,6 +44,13 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public User(String name, String email, String password, String roles) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
     @OneToMany(mappedBy = "user")
@@ -81,5 +94,21 @@ public class User {
 
     public void setTrips(List<Trip> trips) {
         this.trips = trips;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 }

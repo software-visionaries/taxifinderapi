@@ -1,9 +1,5 @@
 package app.taxifinderapi.dto;
 
-import app.taxifinderapi.model.*;
-
-import java.util.List;
-
 public class TripResponseDto {
     private String fromTownName;
     private String  fromAreaName;
