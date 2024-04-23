@@ -1,7 +1,6 @@
 package app.taxifinderapi.controller;
 
-import app.taxifinderapi.dto.TripDTO;
-import app.taxifinderapi.dto.TripResponseDto;
+import app.taxifinderapi.dto.*;
 import app.taxifinderapi.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,4 +56,24 @@ public class TripController {
 
         return tripResponseDtos;
     }
+    @GetMapping("trip/{tripId}")
+    public TripCoordinate singleCoordinates(@PathVariable Long tripId) {
+      return tripService.tripLocation(tripId);
+    }
+
+    @GetMapping("/trips/admin")
+    public List<AdminTripDto> tripDto () {
+       return tripService.adminTripDtoList();
+    }
+
+    @PutMapping("/trips/admin/update/{tripId}/{locationId}")
+    public TripLocationDto updateTripAdmin(@PathVariable Long tripId,@PathVariable Long locationId,
+                                           @RequestBody TripLocationDto tripLocation) {
+        return tripService.updateTripAdmin(tripId,locationId,tripLocation);
+    }
+    @DeleteMapping("/trips/admin/{tripId}/{locationId}")
+    public void deleteTripLocation(Long tripId, Long locationId) {
+        tripService.deleteTripLocation(tripId,locationId);
+    }
+
 }

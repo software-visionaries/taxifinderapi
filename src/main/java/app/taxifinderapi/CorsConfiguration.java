@@ -10,7 +10,7 @@ public class CorsConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://192.168.8.8:8081") // Replace with your Expo development server's IP and port
+                .allowedOrigins("http://192.168.8.13:8081") // Replace with your Expo development server's IP and port
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*");
     }

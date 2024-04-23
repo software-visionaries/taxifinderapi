@@ -12,11 +12,12 @@ public class Section {
     private Long id;
     private String name;
     private String number;
+    
     @ManyToOne()
     @JoinColumn(name = "area")
     private Area area;
 
-    public Section() {
+    public Section(String string, String string2) {
     }
 
     public Section(String name) {

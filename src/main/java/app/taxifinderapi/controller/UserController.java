@@ -27,13 +27,12 @@ public class UserController {
 
     @PostMapping("/add/user")
     public User addUser(@RequestBody User user){
-        User currUser = new User(user.getName(), user.getEmail(), user.getPassword());
-        return userRepository.save(currUser);
+      return userService.saveUser(user);
     }
-    @GetMapping("/User/All")
-    public List<User> getAllusers() {
-        return userService.getAllUsers();
-    }
+    // @GetMapping("/User/All")
+    // public List<User> getAllusers() {
+    //     return userService.getAllUsers();
+    // }
     
     @GetMapping("/User/{user_id}")
     public Optional<User> getUser(@PathVariable Long user_id) {

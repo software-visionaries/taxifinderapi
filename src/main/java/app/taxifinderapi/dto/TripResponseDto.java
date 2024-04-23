@@ -1,9 +1,5 @@
 package app.taxifinderapi.dto;
 
-import app.taxifinderapi.model.*;
-
-import java.util.List;
-
 public class TripResponseDto {
     private String fromTownName;
     private String  fromAreaName;
@@ -14,6 +10,15 @@ public class TripResponseDto {
     private String taxiRankLocation;
     private String taxiRankLatitude;
     private String taxiRankLongitude;
+    private Long LocationId;
+
+    public Long getLocationId() {
+        return LocationId;
+    }
+
+    public void setLocationId(Long locationId) {
+        LocationId = locationId;
+    }
 
     public String getTaxiRankLocation() {
         return taxiRankLocation;

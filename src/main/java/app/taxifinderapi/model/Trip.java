@@ -1,10 +1,8 @@
 package app.taxifinderapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +37,16 @@ public class Trip {
     @ManyToOne()
     @JoinColumn(name = "question")
     private Question question;
+    @OneToMany(mappedBy = "trip")
+    private List<Rating> ratings;
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
 
     public Question getQuestion() {
         return question;
