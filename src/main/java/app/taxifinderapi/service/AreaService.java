@@ -17,8 +17,8 @@ public class AreaService {
     AreaRepository areaRepository;
 
     public Area saveArea(Area Area){
-        Area currArea = new Area(Area.getName());
-        return areaRepository.save(currArea);
+        Area currArea = new Area(Area.getName(), Area.getId());
+        return areaRepository.save(currArea); 
     }
     
     public Optional<Area> findArea( @PathVariable Long id){

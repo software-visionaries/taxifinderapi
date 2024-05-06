@@ -25,7 +25,7 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "area")
     private Area area;
-    
+
     @ManyToOne
     @JoinColumn(name = "section")
     private Section section;
@@ -33,10 +33,12 @@ public class Address {
     public Address() {
     }
 
-    public Address(Town town, Area area, Section section) {
-        this.town = town;
+    public Address(Town town, Area area, Section section, Long id) {
+         this.id = id;
+         this.town = town;
         this.area = area;
         this.section = section;
+       
     }
 
     public Long getId() {

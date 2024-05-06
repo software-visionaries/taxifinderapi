@@ -11,17 +11,19 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String number;
+    
     
     @ManyToOne()
     @JoinColumn(name = "area")
     private Area area;
 
-    public Section(String string, String string2) {
-    }
+    public Section(){
 
-    public Section(String name) {
+    }
+    
+    public Section(String name, Long id) {
         this.name = name;
+        this.id = id ;
     }
 
     public Long getId() {
@@ -31,13 +33,7 @@ public class Section {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
+ 
     public String getName() {
         return name;
     }

@@ -16,7 +16,7 @@ public class SectionService {
      SectionRepository sectionRepository;
 
     public Section save(Section Section){
-        Section currSection = new Section(Section.getName(), Section.getNumber());
+        Section currSection = new Section(Section.getName(), Section.getId());
         return sectionRepository.save(currSection);
     }
 

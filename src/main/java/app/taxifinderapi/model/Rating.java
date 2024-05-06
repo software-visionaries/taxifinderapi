@@ -11,10 +11,10 @@ public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer upVote;
+    // private Integer upVote;
     private boolean isUpVoted = false;
     private boolean isDownVoted = false;
-    private Integer downVote;
+    // private Integer downVote;
     @ManyToOne()
     @JoinColumn(name = "trip")
     private Trip trip;
@@ -35,13 +35,13 @@ public class Rating {
         this.id = id;
     }
 
-    public Integer getUpVote() {
-        return upVote;
-    }
+    // public Integer getUpVote() {
+    //     return upVote;
+    // }
 
-    public void setUpVote(Integer upVote) {
-        this.upVote = upVote;
-    }
+    // public void setUpVote(Integer upVote) {
+    //     this.upVote = upVote;
+    // }
 
     public boolean isUpVoted() {
         return isUpVoted;
@@ -59,13 +59,13 @@ public class Rating {
         isDownVoted = downVoted;
     }
 
-    public Integer getDownVote() {
-        return downVote;
-    }
+    // public Integer getDownVote() {
+    //     return downVote;
+    // }
 
-    public void setDownVote(Integer downVote) {
-        this.downVote = downVote;
-    }
+    // public void setDownVote(Integer downVote) {
+    //     this.downVote = downVote;
+    // }
 
     public Rating() {
     }
@@ -90,10 +90,10 @@ public class Rating {
     public String toString() {
         return "Rating{" +
                 "id=" + id +
-                ", upVote=" + upVote +
+                // ", upVote=" + upVote +
                 ", isUpVoted=" + isUpVoted +
                 ", isDownVoted=" + isDownVoted +
-                ", downVote=" + downVote +
+                // ", downVote=" + downVote +
                 ", trip=" + trip +
                 ", user=" + user +
                 '}';

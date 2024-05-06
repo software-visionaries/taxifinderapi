@@ -20,8 +20,9 @@ public class Town {
     public Town() {
     }
 
-    public Town(String name) {
+    public Town(String name, Long id) {
         this.name = name;
+         this.id = id;
     }
 
     public Long getId() {

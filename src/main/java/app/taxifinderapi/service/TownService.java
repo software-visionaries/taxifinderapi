@@ -14,7 +14,7 @@ public class TownService {
     TownRepository townRepository;
 
     public Town saveTown(Town Town){
-        Town currTown = new Town(Town.getName());
+        Town currTown = new Town(Town.getName(), Town.getId());
         return townRepository.save(currTown);
     }
 

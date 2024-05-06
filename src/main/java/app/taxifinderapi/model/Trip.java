@@ -59,7 +59,7 @@ public class Trip {
     public Trip() {
     }
 
-    public Trip(String attachment, String price, String note, Integer up_vote, Integer down_vote) {
+    public Trip(String attachment, String price, String note) {
         this.attachment = attachment;
         this.price = price;
         this.note = note;

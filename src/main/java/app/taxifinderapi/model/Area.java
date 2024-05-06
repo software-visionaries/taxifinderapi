@@ -25,9 +25,11 @@ public class Area {
     public Area() {
     }
 
-    public Area(String name) {
+    public Area(String name, Long id) {
         this.name = name;
+        this.id = id;
     }
+
 
     public Long getId() {
         return id;
