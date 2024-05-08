@@ -62,4 +62,16 @@ public class TownAreaSectionDto {
     public void setToTown(Town toTown) {
         this.toTown = toTown;
     }
+
+    @Override
+    public String toString() {
+        return "TownAreaSectionDto{" +
+                "fromTown=" + fromTown +
+                ", fromArea=" + fromArea +
+                ", fromSection=" + fromSection +
+                ", toSection=" + toSection +
+                ", toArea=" + toArea +
+                ", toTown=" + toTown +
+                '}';
+    }
 }

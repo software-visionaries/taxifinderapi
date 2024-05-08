@@ -1,6 +1,7 @@
 package app.taxifinderapi.service;
 
 import app.taxifinderapi.dto.AdminQuestionDto;
+import app.taxifinderapi.dto.NotificationDto;
 import app.taxifinderapi.dto.TownAreaSectionDto;
 import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
@@ -250,56 +251,63 @@ public class QuestionService {
 
 
     public TownAreaSectionDto updateQuestionAdmin(Long fromTownId, Long toTownId, Long fromArea, Long toArea,
-                                    Long fromSection, Long toSection, TownAreaSectionDto townAreaSectionDto) {
-        Town fromTownTemp = townRepository.findById(fromTownId).get();
-        Town toTownTemp = townRepository.findById(toTownId).get();
-        Area fromAreaTemp = areaRepository.findById(fromArea).get();
-        Area toAreaTemp = areaRepository.findById(toArea).get();
-        Section fromSectionTemp = sectionRepository.findById(fromSection).get();
-        Section toSectionTemp = sectionRepository.findById(toSection).get();
+                                                  Long fromSection, Long toSection, TownAreaSectionDto townAreaSectionDto) {
+        Town fromTownTemp = townRepository.findById(fromTownId).orElseThrow(() -> new RuntimeException("From town not found"));
+        Town toTownTemp = townRepository.findById(toTownId).orElseThrow(() -> new RuntimeException("To town not found"));
+        Area fromAreaTemp = areaRepository.findById(fromArea).orElseThrow(() -> new RuntimeException("From area not found"));
+        Area toAreaTemp = areaRepository.findById(toArea).orElseThrow(() -> new RuntimeException("To area not found"));
+        Section fromSectionTemp = sectionRepository.findById(fromSection).orElseThrow(() -> new RuntimeException("From section not found"));
+        Section toSectionTemp = sectionRepository.findById(toSection).orElseThrow(() -> new RuntimeException("To section not found"));
 
-        Town townFrom = new Town();
-        Town townTo = new Town();
-        Area areaFrom = new Area();
-        Area areaTo = new Area();
-        Section sectionFrom = new Section();
-        Section sectionTo = new Section();
+        if (!fromTownTemp.equals(toTownTemp)) {
+            if (townAreaSectionDto.getFromTown() != null && townAreaSectionDto.getFromTown().getName() != null &&
+                    !townAreaSectionDto.getFromTown().getName().equals(fromTownTemp.getName())) {
+                fromTownTemp.setName(townAreaSectionDto.getFromTown().getName());
+                townRepository.save(fromTownTemp);
+            }
+            if (townAreaSectionDto.getToTown() != null && townAreaSectionDto.getToTown().getName() != null &&
+                    !townAreaSectionDto.getToTown().getName().equals(toTownTemp.getName())) {
+                toTownTemp.setName(townAreaSectionDto.getToTown().getName());
+                townRepository.save(toTownTemp);
+            }
+        }
+
+        if (!toAreaTemp.equals(fromAreaTemp)) {
+            if (townAreaSectionDto.getFromArea() != null && townAreaSectionDto.getFromArea().getName() != null &&
+                    !townAreaSectionDto.getFromArea().getName().equals(fromAreaTemp.getName())) {
+                fromAreaTemp.setName(townAreaSectionDto.getFromArea().getName());
+                areaRepository.save(fromAreaTemp);
+            }
+            if (townAreaSectionDto.getToArea() != null && townAreaSectionDto.getToArea().getName() != null &&
+                    !townAreaSectionDto.getToArea().getName().equals(toAreaTemp.getName())) {
+                toAreaTemp.setName(townAreaSectionDto.getToArea().getName());
+                areaRepository.save(toAreaTemp);
+            }
+        }
+
+        if (!toSectionTemp.equals(fromSectionTemp)) {
+            if (townAreaSectionDto.getFromSection() != null && townAreaSectionDto.getFromSection().getName() != null &&
+                    !townAreaSectionDto.getFromSection().getName().equals(fromSectionTemp.getName())) {
+                fromSectionTemp.setName(townAreaSectionDto.getFromSection().getName());
+                sectionRepository.save(fromSectionTemp);
+            }
+            if (townAreaSectionDto.getToSection() != null && townAreaSectionDto.getToSection().getName() != null &&
+                    !townAreaSectionDto.getToSection().getName().equals(toSectionTemp.getName())) {
+                toSectionTemp.setName(townAreaSectionDto.getToSection().getName());
+                sectionRepository.save(toSectionTemp);
+            }
+        }
 
         TownAreaSectionDto townAreaSectionDtoHolder = new TownAreaSectionDto();
-        if(townAreaSectionDto.getFromTown().getName()!= null && !(townAreaSectionDto.getFromTown().getName()
-                .equals(fromTownTemp.getName()))) {
-            townFrom.setName(townAreaSectionDto.getFromTown().getName());
-        }
-        if(townAreaSectionDto.getToTown().getName() != null && !(townAreaSectionDto.getToTown().getName()
-                .equals(toTownTemp.getName()))) {
-            townTo.setName(townAreaSectionDto.getToTown().getName());
-        }
-        if(townAreaSectionDto.getFromArea().getName() != null && !(townAreaSectionDto.getFromArea().getName()
-                .equals(fromAreaTemp.getName()))) {
-            areaFrom.setName(townAreaSectionDto.getFromArea().getName());
-        }
-        if(townAreaSectionDto.getToArea().getName() != null && !(townAreaSectionDto.getToArea().getName()
-                .equals(toAreaTemp.getName()))) {
-            areaTo.setName(townAreaSectionDto.getToTown().getName());
-        }
-        if(townAreaSectionDto.getFromSection().getName() != null && !(townAreaSectionDto.getFromSection().getName()
-                .equals(fromSectionTemp.getName()))) {
-            sectionFrom.setName(townAreaSectionDto.getFromSection().getName());
-        }
-        if(townAreaSectionDto.getToSection().getName() != null && !(townAreaSectionDto.getToSection().getName()
-                .equals(toSectionTemp.getName()))) {
-            sectionTo.setName(townAreaSectionDto.getToSection().getName());
-        }
-
-        townAreaSectionDtoHolder.setFromArea(areaFrom);
-        townAreaSectionDtoHolder.setToArea(areaTo);
-        townAreaSectionDtoHolder.setFromTown(townFrom);
-        townAreaSectionDtoHolder.setToTown(townTo);
-        townAreaSectionDtoHolder.setFromSection(sectionFrom);
-        townAreaSectionDtoHolder.setToSection(sectionTo);
-
+        townAreaSectionDtoHolder.setFromArea(fromAreaTemp);
+        townAreaSectionDtoHolder.setToArea(toAreaTemp);
+        townAreaSectionDtoHolder.setFromTown(fromTownTemp);
+        townAreaSectionDtoHolder.setToTown(toTownTemp);
+        townAreaSectionDtoHolder.setFromSection(fromSectionTemp);
+        townAreaSectionDtoHolder.setToSection(toSectionTemp);
         return townAreaSectionDtoHolder;
     }
+
 
     public void deleteTownAreaSection (Long fromTownId, Long toTownId, Long fromAreaId, Long toAreaId,
                                        Long fromSectionId, Long toSectionId) {
@@ -310,5 +318,30 @@ public class QuestionService {
          sectionRepository.deleteById(fromSectionId);
          sectionRepository.deleteById(toSectionId);
 
+    }
+
+
+    public List<NotificationDto> displayNotification() {
+        List<Question> questions = questionRepository.findAll();
+        List<NotificationDto> unAnsweredQuestion = new ArrayList<>();
+
+        for(Question question : questions) {
+            NotificationDto notificationDto = new NotificationDto();
+            if(question.getTrips() == null) {
+                notificationDto.setMessage("Hey Short-lefts! Where can I get taxi's from " +
+                        question.getFromQuestion().getAddress().getTown().getName()+" " +
+                        question.getFromQuestion().getAddress().getArea().getName() + " " +
+                        question.getFromQuestion().getAddress().getSection().getName() + " " +
+                        question.getFromQuestion().getAddress().getSection().getNumber() + " to " +
+                        question.getToQuestion().getAddress().getTown().getName() + " " +
+                        question.getToQuestion().getAddress().getArea().getName() + " " +
+                        question.getToQuestion().getAddress().getSection().getName() + " " +
+                        question.getToQuestion().getAddress().getSection().getNumber() + "?");
+                notificationDto.setQuestionId(question.getQuestionId());
+                unAnsweredQuestion.add(notificationDto);
+            }
+        }
+
+        return unAnsweredQuestion;
     }
 }

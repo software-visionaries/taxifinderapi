@@ -145,7 +145,7 @@ public class TripService {
 
         Town currentTown = townRepository.findByName(questionService.word(fromTown));
         Area currentArea = areaRepository.findByName(questionService.word(fromArea));
-        Section currentSection = sectionRepository.findByName(fromSection);
+        Section currentSection = sectionRepository.findByName(fromSection) ;
 
         Town destinationTown = townRepository.findByName(questionService.word(toTown));
         Area destinationArea = areaRepository.findByName(questionService.word(toArea));

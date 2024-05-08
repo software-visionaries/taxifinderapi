@@ -1,6 +1,7 @@
 package app.taxifinderapi.controller;
 
 import app.taxifinderapi.dto.AdminQuestionDto;
+import app.taxifinderapi.dto.NotificationDto;
 import app.taxifinderapi.dto.TownAreaSectionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +34,18 @@ public class QuestionController {
     public List<AdminQuestionDto> findAllAdminQuestion() {
         return questionService.findAllAdminQuestion();
     }
+    @GetMapping("/get/unanswered-question")
+    public List<NotificationDto> displayUnansweredQuestion() {
+      return  questionService.displayNotification();
+    }
 
     @PutMapping("/admin/questions/update/{fromTownId}/{toTownId}/{fromArea}/{toArea}/{fromSection}/{toSection}")
     public TownAreaSectionDto updateQuestionAdmin(@PathVariable Long fromTownId,@PathVariable Long toTownId,@PathVariable Long fromArea,@PathVariable Long toArea,
                                                   @PathVariable Long fromSection,@PathVariable Long toSection,@RequestBody TownAreaSectionDto townAreaSectionDto) {
         return questionService.updateQuestionAdmin(fromTownId,toTownId,fromArea,toArea,fromSection,toSection,townAreaSectionDto);
+
     }
-    @DeleteMapping("/admin/questions/delete/{fromTownId}/{toTownId }/{fromAreaId}/{toAreaId}/{fromSectionId}/{toSectionId}")
+    @DeleteMapping("/admin/questions/delete/{fromTownId}/{toTownId}/{fromAreaId}/{toAreaId}/{fromSectionId}/{toSectionId}")
     public void deleteTownAreaSection (Long fromTownId, Long toTownId, Long fromAreaId, Long toAreaId,
                                        Long fromSectionId, Long toSectionId) {
         questionService.deleteTownAreaSection(fromTownId,toTownId,fromAreaId,toAreaId,fromSectionId,toSectionId);

@@ -18,4 +18,6 @@ public class UserController {
         User currUser = new User(user.getName(), user.getEmail(), user.getPassword());
         return userRepository.save(currUser);
     }
+
+
 }

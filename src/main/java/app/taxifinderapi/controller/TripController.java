@@ -46,14 +46,14 @@ public class TripController {
         return tripResponseDtos;
     }
 
-    @GetMapping("trip/direction")
-    public List<TripResponseDto> getTaxiLocation(@RequestParam(name = "fromTown") String fromTown,
-            @RequestParam(name = "fromArea") String fromArea,
-            @RequestParam(name = "fromSection") String fromSection, @RequestParam(name = "toTown") String toTown,
-            @RequestParam(name = "toArea") String toArea, @RequestParam(name = "toSection") String toSection) {
+    @GetMapping("trip/direction/{fromTown}/{fromArea}/{fromSection}/{toTown}/{toArea}/{toSection}")
+    public List<TripResponseDto> getTaxiLocation(@PathVariable String fromTown,
+            @PathVariable String fromArea,
+            @PathVariable String fromSection, @PathVariable String toTown,
+            @PathVariable String toArea, @PathVariable String toSection) {
         List<TripResponseDto> tripResponseDtos = tripService.responseTrip(fromTown, fromArea, fromSection, toTown,
                 toArea, toSection);
-
+        System.out.println(tripResponseDtos);
         return tripResponseDtos;
     }
     @GetMapping("trip/{tripId}")
