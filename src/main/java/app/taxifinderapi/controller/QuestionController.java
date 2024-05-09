@@ -3,6 +3,7 @@ package app.taxifinderapi.controller;
 import app.taxifinderapi.dto.AdminQuestionDto;
 import app.taxifinderapi.dto.NotificationDto;
 import app.taxifinderapi.dto.TownAreaSectionDto;
+import app.taxifinderapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +35,9 @@ public class QuestionController {
     public List<AdminQuestionDto> findAllAdminQuestion() {
         return questionService.findAllAdminQuestion();
     }
-    @GetMapping("/get/unanswered-question")
-    public List<NotificationDto> displayUnansweredQuestion() {
-      return  questionService.displayNotification();
+    @GetMapping("/get/unanswered-question/{id}")
+    public List<NotificationDto> displayUnansweredQuestion(@PathVariable Long id) {
+      return  questionService.displayNotification(id);
     }
 
     @PutMapping("/admin/questions/update/{fromTownId}/{toTownId}/{fromArea}/{toArea}/{fromSection}/{toSection}")

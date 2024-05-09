@@ -321,54 +321,46 @@ public class QuestionService {
     }
 
 
-    public List<NotificationDto> displayNotification() {
-        List<User> users = userRepository.findAll();
+
+
+    public List<NotificationDto> displayNotification(Long id) {
         List<Question> questions = questionRepository.findAll();
-        List<NotificationDto> unAnsweredQuestions = new ArrayList<>();
+        List<NotificationDto> unAnsweredQuestion = new ArrayList<>();
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            throw new RuntimeException("Address not found");
+        });
+        for (Question question : questions) {
+            NotificationDto notificationDto = new NotificationDto();
+            if (question.getTrips().isEmpty() || question.getTrips().stream().anyMatch(trip -> trip.getTrip_id() == null)) {
 
-        for (User user : users) {
-            List<Address> userAddresses = user.getAddresses();
-            boolean hasQuestionToAnswer = false;
+                for (Address userAddress : user.getAddresses()) {
+                    String userTown = userAddress.getTown().getName();
+                    String userArea = userAddress.getArea().getName();
 
-            for (Question question : questions) {
-                if (question.getTrips() == null) {
-                    boolean questionMatched = false;
-                    for (Address userAddress : userAddresses) {
-                        if (userAddress.getTown().equals(question.getFromQuestion().getAddress().getTown()) &&
-                                userAddress.getArea().equals(question.getFromQuestion().getAddress().getArea())) {
+                    String questionTown = question.getToQuestion().getAddress().getTown().getName();
+                    String questionArea = question.getToQuestion().getAddress().getArea().getName();
 
-                            NotificationDto notificationDto = new NotificationDto();
-                            notificationDto.setMessage("Hey Short-lefts! Where can I get taxis from " +
-                                    question.getFromQuestion().getAddress().getTown().getName() + " " +
-                                    question.getFromQuestion().getAddress().getArea().getName() + " " +
-                                    question.getFromQuestion().getAddress().getSection().getName() + " " +
-                                    question.getFromQuestion().getAddress().getSection().getNumber() + " to " +
-                                    question.getToQuestion().getAddress().getTown().getName() + " " +
-                                    question.getToQuestion().getAddress().getArea().getName() + " " +
-                                    question.getToQuestion().getAddress().getSection().getName() + " " +
-                                    question.getToQuestion().getAddress().getSection().getNumber() + "?");
-                            notificationDto.setQuestionId(question.getQuestionId());
-                            unAnsweredQuestions.add(notificationDto);
-                            questionMatched = true;
-                            hasQuestionToAnswer = true;
-                            break;
-                        }
-                    }
-                    if (!questionMatched) {
+
+                    if (userTown.equalsIgnoreCase(questionTown) || userArea.equalsIgnoreCase(questionArea)) {
+                        notificationDto.setMessage("Hey Short-lefts! Where can I get taxi's from " +
+                                question.getFromQuestion().getAddress().getTown().getName() + " " +
+                                question.getFromQuestion().getAddress().getArea().getName() + " " +
+                                question.getFromQuestion().getAddress().getSection().getName() + " " + " to " +
+                                question.getToQuestion().getAddress().getTown().getName() + " " +
+                                question.getToQuestion().getAddress().getArea().getName() + " " +
+                                question.getToQuestion().getAddress().getSection().getName() + " " + "?");
+                        notificationDto.setQuestionId(question.getQuestionId());
+                        unAnsweredQuestion.add(notificationDto);
+
                         break;
                     }
                 }
             }
-
-            if (!hasQuestionToAnswer) {
-                NotificationDto notificationDto = new NotificationDto();
-                notificationDto.setMessage("no Questions for region to answer");
-                unAnsweredQuestions.add(notificationDto);
-            }
         }
 
-        return unAnsweredQuestions;
+        return unAnsweredQuestion;
     }
+
 
 
 }
