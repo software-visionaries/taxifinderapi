@@ -322,26 +322,53 @@ public class QuestionService {
 
 
     public List<NotificationDto> displayNotification() {
+        List<User> users = userRepository.findAll();
         List<Question> questions = questionRepository.findAll();
-        List<NotificationDto> unAnsweredQuestion = new ArrayList<>();
+        List<NotificationDto> unAnsweredQuestions = new ArrayList<>();
 
-        for(Question question : questions) {
-            NotificationDto notificationDto = new NotificationDto();
-            if(question.getTrips() == null) {
-                notificationDto.setMessage("Hey Short-lefts! Where can I get taxi's from " +
-                        question.getFromQuestion().getAddress().getTown().getName()+" " +
-                        question.getFromQuestion().getAddress().getArea().getName() + " " +
-                        question.getFromQuestion().getAddress().getSection().getName() + " " +
-                        question.getFromQuestion().getAddress().getSection().getNumber() + " to " +
-                        question.getToQuestion().getAddress().getTown().getName() + " " +
-                        question.getToQuestion().getAddress().getArea().getName() + " " +
-                        question.getToQuestion().getAddress().getSection().getName() + " " +
-                        question.getToQuestion().getAddress().getSection().getNumber() + "?");
-                notificationDto.setQuestionId(question.getQuestionId());
-                unAnsweredQuestion.add(notificationDto);
+        for (User user : users) {
+            List<Address> userAddresses = user.getAddresses();
+            boolean hasQuestionToAnswer = false;
+
+            for (Question question : questions) {
+                if (question.getTrips() == null) {
+                    boolean questionMatched = false;
+                    for (Address userAddress : userAddresses) {
+                        if (userAddress.getTown().equals(question.getFromQuestion().getAddress().getTown()) &&
+                                userAddress.getArea().equals(question.getFromQuestion().getAddress().getArea())) {
+
+                            NotificationDto notificationDto = new NotificationDto();
+                            notificationDto.setMessage("Hey Short-lefts! Where can I get taxis from " +
+                                    question.getFromQuestion().getAddress().getTown().getName() + " " +
+                                    question.getFromQuestion().getAddress().getArea().getName() + " " +
+                                    question.getFromQuestion().getAddress().getSection().getName() + " " +
+                                    question.getFromQuestion().getAddress().getSection().getNumber() + " to " +
+                                    question.getToQuestion().getAddress().getTown().getName() + " " +
+                                    question.getToQuestion().getAddress().getArea().getName() + " " +
+                                    question.getToQuestion().getAddress().getSection().getName() + " " +
+                                    question.getToQuestion().getAddress().getSection().getNumber() + "?");
+                            notificationDto.setQuestionId(question.getQuestionId());
+                            unAnsweredQuestions.add(notificationDto);
+                            questionMatched = true;
+                            hasQuestionToAnswer = true;
+                            break;
+                        }
+                    }
+                    if (!questionMatched) {
+                        break;
+                    }
+                }
+            }
+
+            if (!hasQuestionToAnswer) {
+                NotificationDto notificationDto = new NotificationDto();
+                notificationDto.setMessage("no Questions for region to answer");
+                unAnsweredQuestions.add(notificationDto);
             }
         }
 
-        return unAnsweredQuestion;
+        return unAnsweredQuestions;
     }
+
+
 }
