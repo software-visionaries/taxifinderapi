@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/taxi-finder
     username: root
-    password: Secret123#
+    password: Mduduzi@1
   jpa:
     hibernate:
       ddl-auto: update
