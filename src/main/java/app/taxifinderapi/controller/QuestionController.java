@@ -51,4 +51,7 @@ public class QuestionController {
                                        Long fromSectionId, Long toSectionId) {
         questionService.deleteTownAreaSection(fromTownId,toTownId,fromAreaId,toAreaId,fromSectionId,toSectionId);
     }
+
+
 }
+

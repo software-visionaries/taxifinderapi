@@ -60,67 +60,73 @@ public class QuestionService {
         return questionDTO;
     }
 
+
     @Transactional
     public ResponseEntity<String> postQuestion(Long user_id, QuestionRequest question) {
-
         User user = userRepository.findById(user_id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
 
-        Town fromTown = new Town(word(question.getFromTown()));
-        townRepository.save(fromTown);
+        Town fromTown = townRepository.findByName(word(question.getFromTown()));
+        if (fromTown == null) {
+            fromTown = townRepository.save(new Town(word(question.getFromTown())));
+        }
 
-        Town toTown = new Town(word(question.getToTown()));
-        townRepository.save(toTown);
+        Town toTown = townRepository.findByName(word(question.getToTown()));
+        if (toTown == null) {
+            toTown = townRepository.save(new Town(word(question.getToTown())));
+        }
 
-        Area fromArea = new Area(word(question.getFromArea()));
-        fromArea.setTown(fromTown);
-        areaRepository.save(fromArea);
+        Area fromArea = getOrCreateArea(question.getFromArea(), fromTown);
+        Area toArea = getOrCreateArea(question.getToArea(), toTown);
 
-        Area toArea = new Area(word(question.getToArea()));
-        toArea.setTown(toTown);
-        areaRepository.save(toArea);
+        Section fromSection = getOrCreateSection(question.getFromSection(), fromArea);
+        Section toSection = getOrCreateSection(question.getToSection(), toArea);
 
-        Section fromSection = new Section(question.getFromSection());
-        fromSection.setArea(fromArea);
-        sectionRepository.save(fromSection);
-
-        Section toSection = new Section(question.getToSection());
-        toSection.setArea(toArea);
-        sectionRepository.save(toSection);
-
-        Address addressFrom = new Address(fromTown, fromArea, fromSection);
-        addressFrom.setUser(user);
-        addressFrom.setTown(fromTown);
-        addressFrom.setArea(fromArea);
-        addressFrom.setSection(fromSection);
-        addressRepository.save(addressFrom);
-
-        Address addressTo = new Address(toTown, toArea, toSection);
-        addressTo.setUser(user);
-        addressTo.setTown(toTown);
-        addressTo.setArea(toArea);
-        addressTo.setSection(toSection);
-        addressRepository.save(addressTo);
+        Address addressFrom = createAddress(user, fromTown, fromArea, fromSection);
+        Address addressTo = createAddress(user, toTown, toArea, toSection);
 
         ToQuestion toQuestion = new ToQuestion(addressTo);
-        toQuestion.setAddress(addressTo);
         toQuestionRepository.save(toQuestion);
 
         FromQuestion fromQuestion = new FromQuestion(addressFrom);
-        fromQuestion.setAddress(addressFrom);
         fromQuestionRepository.save(fromQuestion);
 
         Question userQuestion = new Question(fromQuestion, toQuestion);
-        userQuestion.setFromQuestion(fromQuestion);
-        userQuestion.setToQuestion(toQuestion);
+        userQuestion.setUser(user);
+        questionRepository.save(userQuestion);
 
-        if (user != null) {
-            userQuestion.setUser(user);
-            questionRepository.save(userQuestion);
-            return ResponseEntity.ok().body("Question was added successfully");
-        }
-
-        return ResponseEntity.badRequest().body("Question failed to be added");
+        return ResponseEntity.ok().body("Question was added successfully");
     }
+
+    private Area getOrCreateArea(String areaName, Town town) {
+        Area area = areaRepository.findByName(word(areaName));
+        if (area == null) {
+            area = new Area(word(areaName));
+            area.setTown(town);
+            areaRepository.save(area);
+        }
+        return area;
+    }
+
+    private Section getOrCreateSection(String sectionName, Area area) {
+        Section section = sectionRepository.findByName(sectionName);
+        if (section == null) {
+            section = new Section(sectionName);
+            section.setArea(area);
+            sectionRepository.save(section);
+        }
+        return section;
+    }
+
+    private Address createAddress(User user, Town town, Area area, Section section) {
+        Address address = new Address(town, area, section);
+        address.setUser(user);
+        addressRepository.save(address);
+        return address;
+    }
+
 
     public String word(String paragraph) {
         char separator = ',';
