@@ -39,6 +39,8 @@ public class User {
     private List<Comment> comments;
     @OneToMany(mappedBy = "user")
     private List<ReplyComment> replyComments;
+    @OneToMany(mappedBy = "user")
+    private List<PushToken> pushTokens;
     @OneToOne(mappedBy = "user")
     private Rating rating;
 
@@ -81,13 +83,7 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-    }
-
-    public User(String name, String email, String password, String roles) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
+        this.roles = "ROLE_USER";
     }
 
     @OneToMany(mappedBy = "user")
