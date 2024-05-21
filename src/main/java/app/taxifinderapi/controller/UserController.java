@@ -2,6 +2,7 @@ package app.taxifinderapi.controller;
 
 import app.payload.request.UserRequest;
 import app.taxifinderapi.dto.UserResponseDto;
+import app.taxifinderapi.model.User;
 import app.taxifinderapi.repository.UserRepository;
 import app.taxifinderapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
