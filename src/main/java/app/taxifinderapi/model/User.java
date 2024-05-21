@@ -20,6 +20,16 @@ public class User {
 
     private String password;
 
+    public User() {
+    }
+
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.roles = "ROLE_USER";
+    }
+
     public List<Comment> getComments() {
         return comments;
     }
@@ -76,16 +86,6 @@ public class User {
         this.addresses = addresses;
     }
 
-    public User() {
-    }
-
-    public User(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.roles = "ROLE_USER";
-    }
-
     @OneToMany(mappedBy = "user")
     private List<Trip> trips = new ArrayList<>();
 
@@ -139,6 +139,14 @@ public class User {
 
     public List<Question> getQuestions() {
         return questions;
+    }
+
+    public List<PushToken> getPushTokens() {
+        return pushTokens;
+    }
+
+    public void setPushTokens(List<PushToken> pushTokens) {
+        this.pushTokens = pushTokens;
     }
 
     public void setQuestions(List<Question> questions) {

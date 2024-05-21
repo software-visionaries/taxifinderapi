@@ -18,11 +18,15 @@ public class AuthResponseDto {
     @JsonProperty("user_name")
     private String userName;
 
+    @JsonProperty("user_id")
+    private Long user_id;
+
     private AuthResponseDto(AuthResponseDtoBuilder builder) {
         this.accessToken = builder.accessToken;
         this.access_token_expiry = builder.access_token_expiry;
         this.tokenType = builder.tokenType;
         this.userName = builder.userName;
+        this.user_id = builder.user_id;
     }
 
     public static class AuthResponseDtoBuilder {
@@ -31,6 +35,7 @@ public class AuthResponseDto {
         private int access_token_expiry;
         private OAuth2AccessToken.TokenType tokenType;
         private String userName;
+        private Long user_id;
 
         public AuthResponseDtoBuilder accessToken(String accessToken) {
             this.accessToken = accessToken;
@@ -49,6 +54,11 @@ public class AuthResponseDto {
 
         public AuthResponseDtoBuilder userName(String userName) {
             this.userName = userName;
+            return this;
+        }
+
+        public AuthResponseDtoBuilder userId(Long user_id) {
+            this.user_id = user_id;
             return this;
         }
 

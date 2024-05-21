@@ -3,6 +3,7 @@ package app.taxifinderapi.service;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,8 +17,10 @@ import app.taxifinderapi.JwtAuth.JwtTokenGenerator;
 import app.taxifinderapi.dto.AuthResponseDto;
 import app.taxifinderapi.dto.UserRegistrationDto;
 import app.taxifinderapi.mapper.UserInfoMapper;
+import app.taxifinderapi.model.PushToken;
 import app.taxifinderapi.model.RefreshToken;
 import app.taxifinderapi.model.User;
+import app.taxifinderapi.repository.PushTokenRepository;
 import app.taxifinderapi.repository.RefreshTokenRepository;
 import app.taxifinderapi.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
@@ -33,6 +36,9 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final UserInfoMapper userInfoMapper;
+
+    @Autowired
+    PushTokenRepository pushTokenRepository;
 
     public AuthService(UserRepository userRepository, JwtTokenGenerator jwtTokenGenerator,
             RefreshTokenRepository refreshTokenRepository, UserInfoMapper userInfoMapper) {
@@ -62,6 +68,7 @@ public class AuthService {
                     .accessTokenExpiry(15 * 60)
                     .userName(user.getEmail())
                     .tokenType(OAuth2AccessToken.TokenType.BEARER)
+                    .userId(user.getUser_id())
                     .build();
 
         } catch (Exception e) {
@@ -144,6 +151,11 @@ public class AuthService {
             User savedUserDetails = userRepository.save(userDetails);
             saveUserRefreshToken(userDetails, refreshToken);
 
+            PushToken pushToken = new PushToken();
+            pushToken.setPush_token_value(userRegistrationDto.pushToken());
+            pushToken.setUser(savedUserDetails);
+            pushTokenRepository.save(pushToken);
+
             createRefreshTokenCookie(httpServletResponse, refreshToken);
 
             return new AuthResponseDto.AuthResponseDtoBuilder()
@@ -151,6 +163,7 @@ public class AuthService {
             .accessTokenExpiry(5 * 60)
             .userName(savedUserDetails.getEmail())
             .tokenType(TokenType.BEARER)
+            .userId(savedUserDetails.getUser_id())
             .build();
         } catch (Exception e){
             System.out.println("[AuthService:registerUser]Exception while registering the user due to :"+e.getMessage());

@@ -51,7 +51,8 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
     private final LogoutHandlerService logoutHandlerService;
 
     public SecurityConfig(UserInfoManagerService userInfoManagerService, RSAKeyRecord rsaKeyRecord,
-            JwtTokenUtils jwtTokenUtils,RefreshTokenRepository refreshTokenRepository, LogoutHandlerService logoutHandlerService) {
+            JwtTokenUtils jwtTokenUtils, RefreshTokenRepository refreshTokenRepository,
+            LogoutHandlerService logoutHandlerService) {
         this.userInfoManagerService = userInfoManagerService;
         this.rsaKeyRecord = rsaKeyRecord;
         this.jwtTokenUtils = jwtTokenUtils;
@@ -63,7 +64,7 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
     @Bean
     SecurityFilterChain signInSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher("/sign-in/**"))
+                .securityMatcher(new AntPathRequestMatcher("/sign-in"))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .userDetailsService(userInfoManagerService)
@@ -104,7 +105,8 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtRefreshTokenFilter(rsaKeyRecord, jwtTokenUtils, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtRefreshTokenFilter(rsaKeyRecord, jwtTokenUtils, refreshTokenRepository),
+                        UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> {
                     System.out.println("[SecurityConfig:refreshTokenSecurityFilterChain] Exception due to : " + ex);
                     ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
@@ -118,31 +120,31 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
     @Bean
     SecurityFilterChain logoutSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.securityMatcher(new AntPathRequestMatcher("/logout/**"))
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
-        .logout(logout -> logout.logoutUrl("/logout")
-        .addLogoutHandler(logoutHandlerService)
-        .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
-        )
-        .exceptionHandling(ex -> {
-            System.out.println("[SecurityConfig:logoutSecurityFilterChain] Exception due to :{}"+ex);
-            ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
-            ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-        })
-        .build();
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils),
+                        UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout.logoutUrl("/logout")
+                        .addLogoutHandler(logoutHandlerService)
+                        .logoutSuccessHandler(
+                                ((request, response, authentication) -> SecurityContextHolder.clearContext())))
+                .exceptionHandling(ex -> {
+                    System.out.println("[SecurityConfig:logoutSecurityFilterChain] Exception due to :{}" + ex);
+                    ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
+                    ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
+                })
+                .build();
     }
 
     @Order(6)
     @Bean
-    SecurityFilterChain registerSecurityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    SecurityFilterChain registerSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .securityMatcher(new AntPathRequestMatcher("/sign-up/**"))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                        auth.anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
