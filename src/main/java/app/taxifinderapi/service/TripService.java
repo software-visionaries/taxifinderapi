@@ -1,6 +1,7 @@
 package app.taxifinderapi.service;
 
 import app.taxifinderapi.dto.*;
+import app.taxifinderapi.exceptions.ResourceNotFoundException;
 import app.taxifinderapi.exceptions.TripException;
 import app.taxifinderapi.exceptions.UserException;
 import app.taxifinderapi.model.*;
@@ -120,7 +121,9 @@ public class TripService {
         location.setTrip(currTrip);
         locationRepository.save(location);
 
-        User user = userRepository.findById(user_id).orElse(null);
+        User user = userRepository.findById(user_id).orElseThrow( () -> {
+            throw new ResourceNotFoundException("User with email [%s] not found".formatted(user_id));
+        });
         Question question = questionRepository.findById(question_id).orElse(null);
 
         if (user != null && question != null) {
@@ -128,7 +131,7 @@ public class TripService {
             currTrip.setQuestion(question);
             Trip addedTrip = tripRepository.save(currTrip);
             TripDTO tripDTO = new TripDTO();
-            tripDTO.setTripId(addedTrip.getTrip_id());
+            tripDTO.setTripId(addedTrip.getTripId());
             tripDTO.setAttachment(addedTrip.getAttachment());
             tripDTO.setPrice(addedTrip.getPrice());
             tripDTO.setNote(addedTrip.getNote());
@@ -166,6 +169,7 @@ public class TripService {
             responseDto.setToTownName(destinationTown.getName());
             responseDto.setToAreaName(destinationArea.getName());
             responseDto.setToSectionName(destinationSection.getName());
+            responseDto.setQuestionId(question.getQuestionId());
             responseDto.setFarePrice(trip.getPrice());
             responseDto.setUpVote(trip.getUp_vote());
             responseDto.setDownVote(trip.getDown_vote());
@@ -177,10 +181,51 @@ public class TripService {
                 responseDto.setLocationId(tempLocation.getLocation_id());
             });
             responseDto.setAttachment(trip.getAttachment());
-            responseDto.setTripId(trip.getTrip_id());
+            responseDto.setTripId(trip.getTripId());
             return responseDto;
         }).collect(Collectors.toList());
     }
+
+//    public Trip responseTripById(Long tripId) {
+//        Trip trip = tripRepository.findTripByTripId(tripId).orElseThrow(() -> {
+//            throw new ResourceNotFoundException("Trip with id [%s] not found");
+//        });
+
+
+//        Town currentTown = trip.getFromAddress().getTown();
+//        Area currentArea = trip.getFromAddress().getArea();
+//        Section currentSection = trip.getFromAddress().getSection();
+//
+//        Town destinationTown = trip.getToAddress().getTown();
+//        Area destinationArea = trip.getToAddress().getArea();
+//        Section destinationSection = trip.getToAddress().getSection();
+//
+//        TripResponseDto responseDto = new TripResponseDto();
+//        responseDto.setFromAreaName(currentArea.getName());
+//        responseDto.setFromTownName(currentTown.getName());
+//        responseDto.setFromSectionName(currentSection.getName());
+//        responseDto.setToTownName(destinationTown.getName());
+//        responseDto.setToAreaName(destinationArea.getName());
+//        responseDto.setToSectionName(destinationSection.getName());
+//        responseDto.setQuestionId(trip.getQuestion().getQuestionId());
+//        responseDto.setFarePrice(trip.getPrice());
+//        responseDto.setUpVote(trip.getUp_vote());
+//        responseDto.setDownVote(trip.getDown_vote());
+//
+//        List<Location> taxiStand = trip.getLocation();
+//        if (!taxiStand.isEmpty()) {
+//            Location tempLocation = taxiStand.get(0); // Assuming you want the first location
+//            responseDto.setTaxiRankLatitude(tempLocation.getLatitude());
+//            responseDto.setTaxiRankLongitude(tempLocation.getLongitude());
+//            responseDto.setTaxiRankLocation(tempLocation.getName());
+//            responseDto.setLocationId(tempLocation.getLocation_id());
+//        }
+//
+//        responseDto.setAttachment(trip.getAttachment());
+//        responseDto.setTripId(trip.getTrip_id());
+
+//        return trip;
+//    }
 
 
     public TripCoordinate tripLocation(Long tripId) {
@@ -228,7 +273,9 @@ public class TripService {
 
     public List<Trip> userTrip(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> {
-            throw new UserException("User doesn't exists");
+            throw new ResourceNotFoundException(
+                    "User with email [%s] not found.".formatted(userId)
+            );
         });
         List<Trip> trips = tripRepository.findByUser(user);
         return trips;
@@ -267,9 +314,9 @@ public class TripService {
             updatedTrip.setLocation(List.of(location));
         } else if (userLocations.size() > 1) {
 
-            throw new IllegalStateException("Multiple locations found for the user. User needs to select one to update.");
+            throw new ResourceNotFoundException("Multiple locations found for the user. User needs to select one to update.");
         } else {
-            throw new IllegalStateException("No location found for the user.");
+            throw new ResourceNotFoundException("No location found for the user.");
         }
 
         return tripRepository.save(updatedTrip);
@@ -360,7 +407,7 @@ public class TripService {
                 tripDto.setFromQuestion(townFrom.getName() + ", " + areaFrom.getName() + ", " + sectionFrom.getName());
                 tripDto.setToQuestion(townTo.getName() + ", " + areaTo.getName() + ", " + sectionTo.getName());
                 tripDto.setTaxiPrice(trip.getPrice());
-                tripDto.setTripId(trip.getTrip_id());
+                tripDto.setTripId(trip.getTripId());
                 if (taxilocation != null) {
                     tripDto.setTaxiLocation(taxilocation.getName());
                     tripDto.setLocationId(taxilocation.getLocation_id());

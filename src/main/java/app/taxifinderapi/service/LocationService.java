@@ -36,7 +36,7 @@ public class LocationService {
             locationDTO.setName(location.getName());
             locationDTO.setLatitude(location.getLatitude());
             locationDTO.setLongitude(location.getLongitude());
-            locationDTO.setTrip_id(trip.getTrip_id());
+            locationDTO.setTrip_id(trip.getTripId());
             return locationDTO;
         } else {
             return null;

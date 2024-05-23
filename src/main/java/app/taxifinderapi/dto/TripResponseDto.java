@@ -11,6 +11,15 @@ public class TripResponseDto {
     private String taxiRankLatitude;
     private String taxiRankLongitude;
     private Long LocationId;
+    private Long QuestionId;
+
+    public Long getQuestionId() {
+        return QuestionId;
+    }
+
+    public void setQuestionId(Long questionId) {
+        QuestionId = questionId;
+    }
 
     public Long getLocationId() {
         return LocationId;

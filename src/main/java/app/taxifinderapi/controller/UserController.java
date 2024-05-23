@@ -20,12 +20,12 @@ public class UserController {
     public UserResponseDto addUser(@RequestBody UserRequest user){
         return userService.addUser(user);
     }
-    @GetMapping("/users/{id}")
-    public User getUser (@PathVariable Long id) {
-     return    userRepository.findById(id).orElseThrow(() -> {
-            throw new RuntimeException("user does nt exists");
-        });
-    }
+//    @GetMapping("/users/{id}")
+//    public User getUser (@PathVariable Long id) {
+//     return    userRepository.findById(id).orElseThrow(() -> {
+//            throw new RuntimeException("user does nt exists");
+//        });
+//    }
 
 
 }

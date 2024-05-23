@@ -1,6 +1,7 @@
 package app.taxifinderapi.controller;
 
 import app.taxifinderapi.dto.*;
+import app.taxifinderapi.model.Trip;
 import app.taxifinderapi.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,10 @@ public class TripController {
         System.out.println(trip_id);
         return tripService.addImage(multipartFile, path, trip_id);
     }
+//    @GetMapping("trip/{tripId}")
+//    public Trip getTripById(@PathVariable Long tripId) {
+//        return tripService.responseTripById(tripId);
+//    }
 
     @GetMapping("direction")
     public List<TripResponseDto> getTaxiLocation(String fromTown, String fromArea, String fromSection,

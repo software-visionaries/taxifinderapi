@@ -11,7 +11,7 @@ import java.util.List;
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long trip_id;
+    private Long tripId;
 
     private String attachment;
 
@@ -67,12 +67,12 @@ public class Trip {
         this.down_vote = down_vote;
     }
 
-    public Long getTrip_id() {
-        return trip_id;
+    public Long getTripId() {
+        return tripId;
     }
 
-    public void setTrip_id(Long trip_id) {
-        this.trip_id = trip_id;
+    public void setTripId(Long tripId) {
+        this.tripId = tripId;
     }
 
     public String getAttachment() {

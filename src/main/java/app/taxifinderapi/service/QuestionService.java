@@ -3,6 +3,7 @@ package app.taxifinderapi.service;
 import app.taxifinderapi.dto.AdminQuestionDto;
 import app.taxifinderapi.dto.NotificationDto;
 import app.taxifinderapi.dto.TownAreaSectionDto;
+import app.taxifinderapi.exceptions.ResourceNotFoundException;
 import app.taxifinderapi.model.*;
 import app.taxifinderapi.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +64,11 @@ public class QuestionService {
 
     @Transactional
     public ResponseEntity<String> postQuestion(Long user_id, QuestionRequest question) {
-        User user = userRepository.findById(user_id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
+        User user = userRepository.findById(user_id)
+                                  .orElseThrow( () -> {
+                                      throw new ResourceNotFoundException(
+                                              "User with email [%s] not Found".formatted(user_id));
+                                  });
 
         Town fromTown = townRepository.findByName(word(question.getFromTown()));
         if (fromTown == null) {
@@ -120,11 +122,18 @@ public class QuestionService {
         return section;
     }
 
-    private Address createAddress(User user, Town town, Area area, Section section) {
-        Address address = new Address(town, area, section);
-        address.setUser(user);
-        addressRepository.save(address);
-        return address;
+       private Address createAddress(User user, Town town, Area area, Section section) {
+
+        Address existingAddress = addressRepository.findByUserAndTownAndAreaAndSection(user, town, area, section);
+
+        if (existingAddress != null) {
+            return existingAddress;
+        } else {
+            Address address = new Address(town, area, section);
+            address.setUser(user);
+            addressRepository.save(address);
+            return address;
+        }
     }
 
 
@@ -337,7 +346,7 @@ public class QuestionService {
         });
         for (Question question : questions) {
             NotificationDto notificationDto = new NotificationDto();
-            if (question.getTrips().isEmpty() || question.getTrips().stream().anyMatch(trip -> trip.getTrip_id() == null)) {
+            if (question.getTrips().isEmpty() || question.getTrips().stream().anyMatch(trip -> trip.getTripId() == null)) {
 
                 for (Address userAddress : user.getAddresses()) {
                     String userTown = userAddress.getTown().getName();

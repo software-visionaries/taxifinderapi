@@ -19,8 +19,8 @@ public class UserInfoMapper {
         User user = new User();
         user.setEmail(userRegistrationDto.email());
         user.setName(userRegistrationDto.name());
-        user.setPassword(userRegistrationDto.password());
-        user.setRoles(passwordEncoder.encode(userRegistrationDto.role()));
+        user.setPassword(passwordEncoder.encode(userRegistrationDto.password()));
+        user.setRoles(userRegistrationDto.role());
         return user;
     }
 }
