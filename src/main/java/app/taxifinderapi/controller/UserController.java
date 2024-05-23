@@ -2,10 +2,17 @@ package app.taxifinderapi.controller;
 
 import app.payload.request.UserRequest;
 import app.taxifinderapi.dto.UserResponseDto;
+import app.taxifinderapi.model.User;
 import app.taxifinderapi.repository.UserRepository;
 import app.taxifinderapi.service.UserService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
@@ -16,16 +23,14 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/add/user")
-    public UserResponseDto addUser(@RequestBody UserRequest user){
-        return userService.addUser(user);
-    }
-//    @GetMapping("/users/{id}")
-//    public User getUser (@PathVariable Long id) {
-//     return    userRepository.findById(id).orElseThrow(() -> {
-//            throw new RuntimeException("user does nt exists");
-//        });
-//    }
+    // @PostMapping("/add/user")
+    // public UserResponseDto addUser(@RequestBody UserRequest user) {
+    //     return userService.addUser(user);
+    // }
 
+    @PostMapping("/find/users/{town_name}")
+    public List<UserResponseDto> findUsersByTown(@PathVariable String town_name) {
+        return userService.findUsersByTown(town_name);
+    }
 
 }

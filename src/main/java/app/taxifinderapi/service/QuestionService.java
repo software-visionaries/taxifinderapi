@@ -44,10 +44,6 @@ public class QuestionService {
 
     @Autowired
     SectionRepository sectionRepository;
-    @Autowired
-    private TripRepository tripRepository;
-
-
 
     public QuestionDTO getQuestion(Long question_id){
         Question question = questionRepository.findById(question_id).orElse(null);
@@ -164,6 +160,7 @@ public class QuestionService {
 
         return place;
     }
+    
     public static boolean isSeparator(char character, char separator) {
         return character == separator;
     }

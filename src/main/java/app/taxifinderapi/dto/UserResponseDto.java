@@ -1,10 +1,15 @@
 package app.taxifinderapi.dto;
 
+import java.util.List;
+
+import app.taxifinderapi.model.PushToken;
+
 public class UserResponseDto {
+
     private Long user_id;
     private String name;
     private String email;
-    private String pushToken;
+    private List<PushToken> pushToken;
 
     public UserResponseDto() {
     }
@@ -33,11 +38,11 @@ public class UserResponseDto {
         this.email = email;
     }
 
-    public String getPushToken() {
+    public List<PushToken> getPushToken() {
         return pushToken;
     }
 
-    public void setPushToken(String pushToken) {
+    public void setPushToken(List<PushToken> pushToken) {
         this.pushToken = pushToken;
     }
 
