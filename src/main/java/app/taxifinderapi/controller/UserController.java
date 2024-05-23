@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping("/find/users/{town_name}")
     public List<UserResponseDto> findUsersByTown(@PathVariable String town_name) {
-        return userService.findUsersByTown(town_name.toUpperCase().replaceAll("\\s+", ""));
+        return userService.findUsersByTown(town_name);
     }
 
 }

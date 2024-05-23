@@ -6,17 +6,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app.payload.request.UserRequest;
 import app.taxifinderapi.dto.UserResponseDto;
 import app.taxifinderapi.model.Address;
-import app.taxifinderapi.model.PushToken;
 import app.taxifinderapi.model.Town;
 import app.taxifinderapi.model.User;
 import app.taxifinderapi.repository.AddressRepository;
 import app.taxifinderapi.repository.PushTokenRepository;
 import app.taxifinderapi.repository.TownRepository;
 import app.taxifinderapi.repository.UserRepository;
-import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
@@ -32,6 +29,9 @@ public class UserService {
 
     @Autowired
     AddressRepository addressRepository;
+
+    @Autowired
+    QuestionService questionService;
 
     // @Transactional
     // public UserResponseDto addUser(UserRequest userRequest) {
@@ -56,9 +56,10 @@ public class UserService {
     // }
 
     public List<UserResponseDto> findUsersByTown(String townName) {
-        Town town = townRepository.findByName(townName);
+        String townNameFormatted = questionService.word(townName);
+        System.out.println(townNameFormatted);
+        Town town = townRepository.findByName(townNameFormatted);
         List<Address> addresses = addressRepository.findByTown(town);
-        System.out.println(addresses.get(1).getTown().getAreas().get(0).getName());
         ArrayList<User> users = new ArrayList<>();
 
         for (Address address : addresses) {
